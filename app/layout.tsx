@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Vazirmatn } from "next/font/google";
 import { Providers } from "@/components/providers/Providers";
 import "./globals.css";
+import { yekanBakh } from "./local-fonts"; // <- اضافه شد
 
 const vazirmatn = Vazirmatn({
   variable: "--font-vazirmatn",
@@ -21,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fa" dir="rtl" className={`${vazirmatn.variable} h-full`} suppressHydrationWarning>
+    <html lang="fa" dir="rtl" className={`${yekanBakh.variable} h-full`} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

@@ -1,26 +1,238 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Café — light (default for first paint on /cafe) */
+:root,
+[data-platform="cafe"] {
+  --background: #fffbf5;
+  --foreground: #343434;
+  --accent: #575b49;
+  --muted: #575b49;
+  --icon: #575b49;
+  --link: #575b49;
+  --card: #ffffff;
+  --card-elevated: #f7f3eb;
+  --border: #575b4926;
+  --border-strong: #575b494d;
+  --accent-red: #575b49;
+  --surface-glass: rgba(255, 255, 255, 0.25);
+  --surface-glass-border: rgba(255, 255, 255, 0.45);
+}
+
+/* Roastery / shop — dark, same brand palette */
+[data-platform="shop"] {
+  --background: #343434;
+  --foreground: #fffbf5;
+  --accent: #575b49;
+  --muted: #fffbf5b8;
+  --icon: #fffbf5;
+  --link: #fffbf5;
+  --card: #3d3d3a;
+  --card-elevated: #454542;
+  --border: #fffbf52e;
+  --border-strong: #fffbf547;
+  --accent-red: #575b49;
+  --surface-glass: rgba(61, 61, 58, 0.85);
+  --surface-glass-border: #fffbf533;
+  color: #fffbf5;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-icon: var(--icon);
+  --color-link: var(--link);
+  --color-card: var(--card);
+  --color-card-elevated: var(--card-elevated);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent-red: var(--accent-red);
+  --font-sans: var(--font-vazirmatn);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-vazirmatn), system-ui, sans-serif;
+  transition:
+    background-color 0.45s ease,
+    color 0.45s ease;
+}
+
+::selection {
+  background: #575b4955;
+  color: var(--foreground);
+}
+
+/* Roastery: cream copy & UI chrome (accent stays olive on buttons/badges) */
+[data-platform="shop"] .text-muted {
+  color: #fffbf5b8;
+}
+
+[data-platform="shop"] .text-accent {
+  color: #fffbf5;
+}
+
+[data-platform="shop"] a:hover.text-accent,
+[data-platform="shop"] .group:hover .group-hover\:text-accent,
+[data-platform="shop"] .hover\:text-accent:hover {
+  color: #fffbf5;
+  opacity: 0.92;
+}
+
+[data-platform="shop"] .text-foreground\/85,
+[data-platform="shop"] .text-foreground\/80,
+[data-platform="shop"] .text-foreground\/75,
+[data-platform="shop"] .text-foreground\/90 {
+  color: #fffbf5;
+}
+
+[data-platform="shop"] .text-foreground\/55 {
+  color: #fffbf58c;
+}
+
+[data-platform="shop"] .text-foreground\/35 {
+  color: #fffbf55c;
+}
+
+/* PNG / brand icons → cream on dark roastery */
+[data-platform="shop"] .app-icon,
+[data-platform="shop"] .brand-logo img {
+  filter: brightness(0) saturate(100%) invert(98%) sepia(7%) saturate(420%)
+    hue-rotate(358deg) brightness(104%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes shimmer {
+    0% {
+      background-position: 200% center;
+    }
+    100% {
+      background-position: -200% center;
+    }
+  }
+
+  @keyframes float-y {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.cafe-footer-marquee {
+  display: inline-flex;
+  gap: 3.5rem;
+  padding-inline: 0.5rem;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-size: 0.62rem;
+  color: var(--muted);
+  animation: cafe-footer-marquee 22s linear infinite;
+}
+
+.cafe-footer-marquee span {
+  opacity: 0.9;
+}
+
+.cafe-footer-orbit {
+  position: absolute;
+  right: -80px;
+  bottom: -80px;
+  width: 260px;
+  height: 260px;
+  border-radius: 999px;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  background:
+    radial-gradient(circle at 30% 10%, rgba(255, 255, 255, 0.7), transparent 60%),
+    radial-gradient(circle at 80% 90%, rgba(251, 191, 36, 0.7), rgba(180, 83, 9, 0.9));
+  filter: blur(1px);
+  opacity: 0.16;
+  box-shadow:
+    0 0 80px rgba(251, 191, 36, 0.8),
+    0 0 160px rgba(251, 191, 36, 0.7);
+  animation: cafe-footer-orbit 26s linear infinite;
+}
+
+.cafe-footer-orbit::after {
+  content: "";
+  position: absolute;
+  inset: 18%;
+  border-radius: inherit;
+  border: 1px dashed rgba(15, 23, 42, 0.7);
+  opacity: 0.75;
+}
+
+.cafe-footer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-inline: 0.85rem;
+  padding-block: 0.4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(226, 232, 240, 0.45);
+  background: radial-gradient(circle at 0 0, rgba(248, 250, 252, 0.18), transparent 60%),
+    rgba(15, 23, 42, 0.7);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(248, 250, 252, 0.9);
+}
+
+@keyframes cafe-footer-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes cafe-footer-orbit {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(10px, -10px, 0) rotate(360deg);
+  }
 }

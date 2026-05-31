@@ -10,11 +10,29 @@ import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/lib/format";
 import { spring } from "@/lib/motion";
 import { Z } from "@/lib/z-index";
+import { MdDelete } from "react-icons/md";
+import type { Variants } from "framer-motion";
+
+
 
 export function CartModal() {
   const { items, total, count, isOpen, closeCart, removeItem } = useCart();
   const router = useRouter();
   const reduce = useReducedMotion();
+  const deleteBtnVariants: Variants = {
+  rest: { scale: 1, rotate: 0, x: 0 },
+
+  hover: {
+    scale: [1, 1.3, 1],
+    rotate: [0, -12, 12, -10, 10, 0],
+    x: [0, -2, 2, -2, 2, 0],
+    transition: {
+      duration: 0.65,
+      ease: "easeInOut",
+    },
+  },
+};
+
 
   useEffect(() => {
     if (!isOpen) return;
@@ -90,7 +108,7 @@ export function CartModal() {
                   <Button
                     type="button"
                     variant="secondary"
-                    className="mt-6"
+                    className="mt-6 rounded-2xl"
                     onClick={closeCart}
                   >
                     ادامه خرید
@@ -127,14 +145,22 @@ export function CartModal() {
                           {formatPrice(item.price * item.quantity)}
                         </p>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => removeItem(item.id)}
-                        className="self-start text-xs text-muted transition hover:text-red-600"
-                        aria-label="حذف"
-                      >
-                        حذف
-                      </button>
+                    <motion.button
+  type="button"
+  onClick={() => removeItem(item.id)}
+  className="ml-5 self-center text-xs text-muted"
+  aria-label="حذف"
+  initial="rest"
+  animate="rest"
+  whileHover={reduce ? undefined : "hover"}
+  variants={deleteBtnVariants}
+  whileTap={{ scale: 0.9 }}
+>
+  <MdDelete
+    className="text-red-400/75 transition-colors hover:text-red-400"
+    size={18}
+  />
+</motion.button>
                     </motion.li>
                   ))}
                 </ul>
@@ -145,16 +171,22 @@ export function CartModal() {
               <div className="border-t border-border bg-card-elevated/50 p-5">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted">جمع کل</span>
-                  <span className="text-xl font-extrabold">{formatPrice(total)}</span>
+                  <span className="text-xl font-extrabold">
+                    {formatPrice(total)}
+                  </span>
                 </div>
                 <div className="mt-4 flex flex-col gap-2">
-                  <Button type="button" className="w-full" onClick={goCheckout}>
+                  <Button
+                    type="button"
+                    className="w-full rounded-2xl"
+                    onClick={goCheckout}
+                  >
                     ادامه تسویه
                   </Button>
                   <Button
                     type="button"
                     variant="secondary"
-                    className="w-full"
+                    className="w-full rounded-2xl"
                     onClick={closeCart}
                   >
                     ادامه خرید

@@ -36,7 +36,7 @@ export function GiftingArt() {
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
             <Link
               href="#gifts"
-              className="mt-10 inline-flex w-fit bg-background px-8 py-3.5 text-sm font-semibold text-foreground shadow-lg transition hover:shadow-xl"
+              className="mt-10 inline-flex rounded-2xl w-fit bg-background px-8 py-3.5 text-sm font-semibold text-foreground shadow-lg transition hover:shadow-xl"
             >
               مشاهده هدایای قهوه‌ای
             </Link>
@@ -44,7 +44,7 @@ export function GiftingArt() {
         </motion.div>
 
         <motion.div
-          className="relative min-h-[400px] lg:min-h-[520px]"
+          className="relative min-h-100 lg:min-h-130"
           initial={reduce ? false : { scale: 1.1, opacity: 0 }}
           whileInView={{ scale: 1, opacity: 1 }}
           viewport={{ once: true }}

@@ -25,7 +25,7 @@ export function Features() {
   return (
     <section className="relative overflow-hidden border-b border-border py-16 lg:py-20">
       <FloatingOrbs />
-      <div className="relative mx-auto max-w-[1400px] px-6 lg:px-10">
+      <div className="relative mx-auto max-w-350 px-6 lg:px-10">
         <Reveal className="mb-12 text-center md:mb-14">
           <p className="text-xs font-semibold tracking-[0.3em] text-accent">
             چرا کوبار
@@ -35,7 +35,7 @@ export function Features() {
           {features.map((feature, i) => (
             <StaggerItem key={feature.label}>
               <motion.div
-                className="group flex flex-col items-center gap-4 rounded-2xl border border-white/10 p-4 text-center transition-colors hover:border-border hover:bg-card"
+                className="group flex flex-col items-center gap-4 rounded-2xl  p-4 text-center transition-colors hover:border-border hover:bg-card"
                 whileHover={reduce ? {} : { y: -6 }}
                 transition={{ duration: 0.35, ease }}
               >
@@ -49,7 +49,7 @@ export function Features() {
                 >
                   <AppIcon name={featureIcons[feature.icon]} size={40}  />
                 </motion.div>
-                <p className="max-w-[180px] text-sm font-bold leading-7 text-foreground">
+                <p className="max-w-45 text-sm font-bold leading-7 text-foreground">
                   {feature.label}
                 </p>
               </motion.div>

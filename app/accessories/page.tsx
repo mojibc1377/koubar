@@ -28,7 +28,7 @@ export default function AccessoriesPage() {
               <p className="mt-4 font-bold">{formatPrice(item.price)}</p>
               <button
                 type="button"
-                className="mt-4 w-full bg-accent py-2.5 text-sm font-semibold text-background"
+                className="mt-4 w-full bg-accent rounded-2xl py-2.5 text-sm font-semibold text-background"
               >
                 افزودن به سبد
               </button>

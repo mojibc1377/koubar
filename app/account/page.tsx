@@ -50,7 +50,7 @@ export default function AccountPage() {
         <Input label="شماره موبایل" name="phone" defaultValue={user.phone} required />
         <Input label="آدرس" name="address" defaultValue={user.address} required />
         <div className="flex flex-wrap items-center gap-3 pt-2">
-          <Button type="submit">ذخیره تغییرات</Button>
+          <Button className="rounded-2xl" type="submit">ذخیره تغییرات</Button>
           <Button
             type="button"
             variant="ghost"

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import Link from "next/link";
@@ -107,9 +108,8 @@ export function HeaderMobileMenu({ links }: { links: readonly NavLink[] }) {
                     بستن
                   </motion.button>
                 </div>
-
                 <motion.div
-                  className="relative flex-1 overflow-y-auto px-4 py-6"
+                  className="relative flex-1 justify-between overflow-y-auto px-4 py-6"
                   variants={staggerContainer}
                   initial="hidden"
                   animate="visible"
@@ -120,7 +120,7 @@ export function HeaderMobileMenu({ links }: { links: readonly NavLink[] }) {
                   >
                     {mode === "cafe" ? "منوی کافه" : "فروشگاه"}
                   </motion.p>
-
+<div>
                   <ul className="space-y-2">
                     {links.map((link) => {
                       const base = link.href.split("#")[0];
@@ -156,7 +156,8 @@ export function HeaderMobileMenu({ links }: { links: readonly NavLink[] }) {
                       );
                     })}
                   </ul>
-
+                  </div>
+<div>
                   <motion.div
                     variants={staggerItem}
                     className="mt-8 rounded-2xl border border-border bg-linear-to-br from-accent/10 to-card p-4"
@@ -192,6 +193,7 @@ export function HeaderMobileMenu({ links }: { links: readonly NavLink[] }) {
                       </div>
                     )}
                   </motion.div>
+                  </div>
                 </motion.div>
               </motion.nav>
             </>

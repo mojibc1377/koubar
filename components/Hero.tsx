@@ -48,7 +48,7 @@ function HeroContent({ slideKey, slide }: { slideKey: number; slide: (typeof sli
           className="space-y-1 text-4xl font-extrabold leading-tight tracking-tight text-background sm:text-5xl lg:text-[3.25rem]"
         />
         <motion.p
-          className="mt-6 max-w-lg text-base leading-8 text-background/85 lg:mt-8"
+          className="mt-6 max-w-lg text-base leading-8 text-foreground/75 lg:mt-8"
           initial={reduce ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 0.6, ease }}
@@ -62,7 +62,7 @@ function HeroContent({ slideKey, slide }: { slideKey: number; slide: (typeof sli
         >
           <Link
             href="#products"
-            className="group mt-8 inline-flex w-fit items-center gap-2 border border-background/25 bg-accent px-8 py-3.5 text-sm font-medium text-background transition-colors hover:bg-foreground lg:mt-10"
+            className="group mt-8 inline-flex w-fit items-center gap-2 border rounded-2xl border-background/25 bg-accent px-8 py-3.5 text-sm font-medium text-background transition-colors hover:bg-foreground lg:mt-10"
           >
             مشاهده محصولات
             <motion.span
@@ -125,7 +125,7 @@ export function Hero() {
           </video>
         </motion.div>
         <div className="absolute inset-0 bg-foreground/35 lg:bg-foreground/25" />
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/60 to-foreground/20 lg:hidden" />
+        <div className="absolute inset-0 bg-linear-to-t from-foreground via-foreground/60 to-foreground/20 lg:hidden" />
         <AnimatePresence mode="wait">
           <motion.p
             key={slide.overlay}

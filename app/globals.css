@@ -236,3 +236,28 @@ body {
     transform: translate3d(10px, -10px, 0) rotate(360deg);
   }
 }
+
+/*
+Source - https://stackoverflow.com/a/38133000
+Posted by Woodrow Barlow
+Retrieved 2026-05-31, License - CC BY-SA 3.0
+*/
+
+@keyframes wiggle {
+    0% { transform: rotate(0deg); }
+   80% { transform: rotate(0deg); }
+   85% { transform: rotate(5deg); }
+   95% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.wiggle {
+  display: inline-block;
+    animation: none;
+
+}
+
+.wiggle:hover {
+    animation: wiggle 2.5s infinite;
+
+}

@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/use-auth";
 import { getOrders } from "@/lib/auth-storage";
 import { formatPrice } from "@/lib/format";
 import { ease } from "@/lib/motion";
@@ -45,7 +45,9 @@ export function AccountLayoutClient({ children }: { children: React.ReactNode })
             <h1 className="mt-2 text-3xl font-extrabold md:text-4xl">
               سلام، {firstName} 👋
             </h1>
-            <p className="mt-2 max-w-md text-sm text-muted">{user?.email}</p>
+            <p className="mt-2 max-w-md text-sm text-muted" dir="ltr">
+              {user?.phone}
+            </p>
           </div>
           <div className="flex flex-wrap gap-3">
             {[

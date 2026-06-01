@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { FaUserCircle } from "react-icons/fa";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/use-auth";
 import { usePlatformMode } from "@/context/PlatformModeContext";
 import { ease, spring, staggerContainer, staggerItem } from "@/lib/motion";
 import { Z } from "@/lib/z-index";

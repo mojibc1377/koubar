@@ -47,7 +47,7 @@ export function Features() {
                     ease: "easeInOut",
                   }}
                 >
-                  <AppIcon name={featureIcons[feature.icon]} size={40}  />
+                  <AppIcon name={featureIcons[feature.icon]} size={40} tone="olive" />
                 </motion.div>
                 <p className="max-w-45 text-sm font-bold leading-7 text-foreground">
                   {feature.label}

@@ -1,6 +1,5 @@
-import type { Order, Transaction, User } from "./types";
+import type { Order, Transaction } from "./types";
 
-const USER_KEY = "Koubar_user";
 const ORDERS_KEY = "Koubar_orders";
 const TX_KEY = "Koubar_transactions";
 
@@ -64,18 +63,6 @@ function read<T>(key: string, fallback: T): T {
 
 function write<T>(key: string, value: T) {
   localStorage.setItem(key, JSON.stringify(value));
-}
-
-export function getStoredUser(): User | null {
-  return read<User | null>(USER_KEY, null);
-}
-
-export function saveUser(user: User) {
-  write(USER_KEY, user);
-}
-
-export function clearUser() {
-  localStorage.removeItem(USER_KEY);
 }
 
 export function getOrders(): Order[] {

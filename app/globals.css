@@ -104,11 +104,15 @@ body {
   color: #fffbf55c;
 }
 
-/* PNG / brand icons → cream on dark roastery */
-[data-platform="shop"] .app-icon,
+/* PNG / brand icons → cream on dark roastery (except .app-icon-olive) */
+[data-platform="shop"] .app-icon:not(.app-icon-olive),
 [data-platform="shop"] .brand-logo img {
   filter: brightness(0) saturate(100%) invert(98%) sepia(7%) saturate(420%)
     hue-rotate(358deg) brightness(104%);
+}
+
+[data-platform="shop"] .app-icon-olive {
+  filter: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {

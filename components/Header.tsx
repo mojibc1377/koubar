@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import { FaShoppingCart, FaUserCircle } from "react-icons/fa";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/use-auth";
 import { usePlatformMode } from "@/context/PlatformModeContext";
 import { getNavLinks } from "@/lib/navigation";
 import { ease, spring } from "@/lib/motion";

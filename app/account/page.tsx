@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { spring } from "@/lib/motion";
@@ -16,16 +16,20 @@ export default function AccountPage() {
 
   if (!user) return null;
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
-    updateProfile({
-      name: String(form.get("name") ?? ""),
-      phone: String(form.get("phone") ?? ""),
-      address: String(form.get("address") ?? ""),
-    });
-    setSaved(true);
-    window.setTimeout(() => setSaved(false), 2500);
+    try {
+      await updateProfile({
+        name: String(form.get("name") ?? ""),
+        phone: String(form.get("phone") ?? ""),
+        address: String(form.get("address") ?? ""),
+      });
+      setSaved(true);
+      window.setTimeout(() => setSaved(false), 2500);
+    } catch {
+      setSaved(false);
+    }
   }
 
   return (
@@ -40,8 +44,8 @@ export default function AccountPage() {
           <h2 className="text-xl font-bold">اطلاعات حساب</h2>
           <p className="mt-2 text-sm text-muted">ویرایش مشخصات و آدرس تحویل</p>
         </div>
-        <span className="rounded-full border border-border-strong bg-card-elevated px-3 py-1 text-xs text-muted">
-          {user.email}
+        <span className="rounded-full border border-border-strong bg-card-elevated px-3 py-1 text-xs text-muted" dir="ltr">
+          {user.phone}
         </span>
       </div>
 

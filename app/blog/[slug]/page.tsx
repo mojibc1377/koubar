@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BlogArticleView } from "@/components/blog/BlogArticleView";
 import { PageShell } from "@/components/PageShell";
 import { blogPosts, getPost } from "@/lib/blog";
 
@@ -16,27 +16,13 @@ export default async function BlogPostPage({
   const post = getPost(slug);
   if (!post) notFound();
 
+  const related = blogPosts.filter((p) => p.slug !== slug).slice(0, 2);
+
   return (
     <PageShell>
-      <article className="mx-auto max-w-3xl px-6 py-16 lg:py-24">
-        <Link href="/blog" className="text-sm text-muted hover:text-accent">
-          ← بازگشت به وبلاگ
-        </Link>
-        <p className="mt-6 text-xs text-muted">
-          {post.category} · {post.date} · {post.readMinutes} دقیقه
-        </p>
-        <h1 className="mt-4 text-3xl font-extrabold leading-tight md:text-4xl">
-          {post.title}
-        </h1>
-        <p className="mt-4 text-muted">نویسنده: {post.author}</p>
-        <div className="mt-10 space-y-6 border-t border-border pt-10">
-          {post.content.map((paragraph) => (
-            <p key={paragraph.slice(0, 24)} className="text-lg leading-9 text-foreground/80">
-              {paragraph}
-            </p>
-          ))}
-        </div>
-      </article>
+      <div className="mx-auto max-w-[1400px] px-6 py-10 lg:px-10 lg:py-14">
+        <BlogArticleView post={post} related={related} />
+      </div>
     </PageShell>
   );
 }

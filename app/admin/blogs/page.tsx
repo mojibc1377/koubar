@@ -13,11 +13,13 @@ const emptyBlog = (): AdminBlog => ({
   slug: "",
   title: "",
   excerpt: "",
+  image: "/images/hero.png",
   date: "۱۴۰۴/۰۳/۱۰",
   author: "تیم کوبار",
   category: "دانش قهوه",
   readMinutes: 5,
   content: [""],
+  blocks: [{ type: "paragraph", text: "" }],
   status: "draft",
 });
 
@@ -174,6 +176,12 @@ export default function AdminBlogsPage() {
                 onChange={(e) => setDraft({ ...draft, title: e.target.value })}
               />
             </div>
+            <AdminInput
+              label="تصویر (مسیر)"
+              value={draft.image}
+              onChange={(e) => setDraft({ ...draft, image: e.target.value })}
+              dir="ltr"
+            />
             <AdminInput
               label="اسلاگ (URL)"
               value={draft.slug}

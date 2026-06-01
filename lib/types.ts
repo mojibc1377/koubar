@@ -32,15 +32,38 @@ export type Transaction = {
   status: "paid" | "refunded" | "pending";
 };
 
+export type BlogContentBlock =
+  | { type: "paragraph"; text: string }
+  | { type: "heading"; text: string }
+  | { type: "quote"; text: string; cite?: string }
+  | { type: "callout"; variant?: "tip" | "note"; title: string; text: string }
+  | { type: "list"; ordered?: boolean; items: string[] }
+  | { type: "divider" };
+
 export type BlogPost = {
   slug: string;
   title: string;
   excerpt: string;
+  image: string;
   date: string;
   author: string;
   category: string;
   readMinutes: number;
+  /** @deprecated use blocks — kept for admin fallback */
   content: string[];
+  blocks: BlogContentBlock[];
+};
+
+export type AccessoryItem = {
+  id: string;
+  title: string;
+  description: string;
+  longDescription?: string;
+  image: string;
+  price: number;
+  badge?: string;
+  notes?: string[];
+  category: string;
 };
 
 export type CafeMenuItem = {

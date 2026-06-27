@@ -164,6 +164,14 @@ async function main() {
     });
   }
 
+  const staffMembers = await Promise.all(
+    [
+      { name: "علی احمدی", role: "سرور" },
+      { name: "مریم حسینی", role: "باریستا" },
+      { name: "رضا کریمی", role: "سرور" },
+    ].map((s) => prisma.staff.create({ data: s })),
+  );
+
   const roastery = await prisma.roasteryProduct.findFirst();
   const cafeItem = await prisma.cafeMenuItem.findFirst();
 
@@ -237,6 +245,148 @@ async function main() {
         amount: order.total,
         method: "ثبت دستی (بدون درگاه)",
         status: "PAID",
+      },
+    });
+  }
+
+  if (cafeItem && demoUsers[2]) {
+    const order = await prisma.order.create({
+      data: {
+        orderNumber: "ORD-SEED003",
+        userId: demoUsers[2].id,
+        type: "CAFE",
+        status: "DELIVERED",
+        total: cafeItem.price * 3,
+        shippingName: demoUsers[2].name!,
+        shippingPhone: demoUsers[2].phone,
+        shippingAddress: demoUsers[2].address!,
+        items: {
+          create: [
+            {
+              source: "CAFE",
+              catalogId: cafeItem.slug,
+              title: cafeItem.name,
+              image: cafeItem.image,
+              price: cafeItem.price,
+              quantity: 3,
+            },
+          ],
+        },
+      },
+    });
+    await prisma.transaction.create({
+      data: {
+        txNumber: "TX-SEED003",
+        orderId: order.id,
+        userId: demoUsers[2].id,
+        amount: order.total,
+        method: "ثبت دستی (بدون درگاه)",
+        status: "PAID",
+      },
+    });
+    await prisma.review.create({
+      data: {
+        orderId: order.id,
+        userId: demoUsers[2].id,
+        staffId: staffMembers[1]!.id,
+        staffStars: 5,
+        foodStars: 4,
+        comment: "قهوه عالی بود و برخورد پرسنل بسیار محترمانه.",
+      },
+    });
+  }
+
+  if (roastery && demoUsers[1] && staffMembers[0]) {
+    const deliveredShop = await prisma.order.create({
+      data: {
+        orderNumber: "ORD-SEED004",
+        userId: demoUsers[1].id,
+        type: "SHOP",
+        status: "DELIVERED",
+        total: roastery.price * 2,
+        shippingName: demoUsers[1].name!,
+        shippingPhone: demoUsers[1].phone,
+        shippingAddress: demoUsers[1].address!,
+        items: {
+          create: [
+            {
+              source: "ROASTERY",
+              catalogId: roastery.slug,
+              title: roastery.title,
+              image: roastery.image,
+              price: roastery.price,
+              quantity: 2,
+            },
+          ],
+        },
+      },
+    });
+    await prisma.transaction.create({
+      data: {
+        txNumber: "TX-SEED004",
+        orderId: deliveredShop.id,
+        userId: demoUsers[1].id,
+        amount: deliveredShop.total,
+        method: "ثبت دستی (بدون درگاه)",
+        status: "PAID",
+      },
+    });
+    await prisma.review.create({
+      data: {
+        orderId: deliveredShop.id,
+        userId: demoUsers[1].id,
+        staffId: staffMembers[0]!.id,
+        staffStars: 4,
+        foodStars: 5,
+        comment: "بسته‌بندی مرتب و تحویل سریع.",
+      },
+    });
+  }
+
+  if (cafeItem && demoUsers[0] && staffMembers[2]) {
+    const order = await prisma.order.create({
+      data: {
+        orderNumber: "ORD-SEED005",
+        userId: demoUsers[0].id,
+        type: "CAFE",
+        status: "DELIVERED",
+        total: cafeItem.price,
+        shippingName: demoUsers[0].name!,
+        shippingPhone: demoUsers[0].phone,
+        shippingAddress: demoUsers[0].address!,
+        items: {
+          create: [
+            {
+              source: "CAFE",
+              catalogId: cafeItem.slug,
+              title: cafeItem.name,
+              image: cafeItem.image,
+              price: cafeItem.price,
+              quantity: 1,
+            },
+          ],
+        },
+      },
+    });
+    await prisma.transaction.create({
+      data: {
+        txNumber: "TX-SEED005",
+        orderId: order.id,
+        userId: demoUsers[0].id,
+        amount: order.total,
+        method: "ثبت دستی (بدون درگاه)",
+        status: "PAID",
+      },
+    });
+    await prisma.review.create({
+      data: {
+        orderId: order.id,
+        userId: demoUsers[0].id,
+        staffId: staffMembers[2]!.id,
+        staffStars: 5,
+        foodStars: 5,
+        comment: "فضای کافه دلنشین و سرویس فوق‌العاده.",
+        createdAt: new Date(Date.now() - 86400000),
       },
     });
   }

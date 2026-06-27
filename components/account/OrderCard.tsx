@@ -28,7 +28,17 @@ function stepIndex(status: Order["status"]) {
   return 2;
 }
 
-export function OrderCard({ order, index }: { order: Order; index: number }) {
+export function OrderCard({
+  order,
+  index,
+  showReviewButton,
+  onReviewClick,
+}: {
+  order: Order;
+  index: number;
+  showReviewButton?: boolean;
+  onReviewClick?: () => void;
+}) {
   const [open, setOpen] = useState(index === 0);
   const reduce = useReducedMotion();
   const active = stepIndex(order.status);
@@ -60,6 +70,18 @@ export function OrderCard({ order, index }: { order: Order; index: number }) {
             {statusLabels[order.status]}
           </span>
           <p className="font-bold">{formatPrice(order.total)}</p>
+          {showReviewButton && onReviewClick && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onReviewClick();
+              }}
+              className="rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-xs font-semibold text-accent transition hover:bg-accent/20"
+            >
+              ثبت نظر
+            </button>
+          )}
           <motion.span
             animate={{ rotate: open ? 180 : 0 }}
             className="text-xs text-muted"

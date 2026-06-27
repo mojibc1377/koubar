@@ -1,11 +1,14 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { OrderCard } from "@/components/account/OrderCard";
+import { ReviewSheet, SuccessToast } from "@/components/account/ReviewSheet";
 import { useMyOrders, useMyTransactions } from "@/hooks/use-orders";
+import { useReview } from "@/hooks/use-reviews";
 import { formatPrice } from "@/lib/format";
 import { ease } from "@/lib/motion";
-import type { Transaction } from "@/lib/types";
+import type { Order, Transaction } from "@/lib/types";
 
 const txLabels: Record<Transaction["status"], string> = {
   paid: "پرداخت شده",
@@ -19,10 +22,38 @@ const txColors: Record<Transaction["status"], string> = {
   pending: "text-muted",
 };
 
+function OrderCardWithReview({
+  order,
+  index,
+  onReviewClick,
+}: {
+  order: Order;
+  index: number;
+  onReviewClick: (orderId: string) => void;
+}) {
+  const canCheckReview = order.status === "delivered";
+  const { data: review, isLoading: reviewLoading } = useReview(
+    canCheckReview ? order.id : undefined,
+  );
+  const showReviewButton =
+    canCheckReview && !reviewLoading && !review;
+
+  return (
+    <OrderCard
+      order={order}
+      index={index}
+      showReviewButton={showReviewButton}
+      onReviewClick={() => onReviewClick(order.id)}
+    />
+  );
+}
+
 export default function OrdersPage() {
   const { data: orders = [], isLoading: ordersLoading } = useMyOrders();
   const { data: transactions = [], isLoading: txLoading } = useMyTransactions();
   const reduce = useReducedMotion();
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   return (
     <div className="space-y-8">
@@ -43,7 +74,12 @@ export default function OrdersPage() {
 
         <ul className="mt-8 space-y-4">
           {orders.map((order, index) => (
-            <OrderCard key={order.id} order={order} index={index} />
+            <OrderCardWithReview
+              key={order.id}
+              order={order}
+              index={index}
+              onReviewClick={setSelectedOrderId}
+            />
           ))}
         </ul>
         {!ordersLoading && orders.length === 0 && (
@@ -116,6 +152,23 @@ export default function OrdersPage() {
           </table>
         </div>
       </motion.section>
+
+      {selectedOrderId && (
+        <ReviewSheet
+          orderId={selectedOrderId}
+          onClose={() => setSelectedOrderId(null)}
+          onSuccess={() => setSuccessMessage("نظر شما با موفقیت ثبت شد. متشکریم!")}
+        />
+      )}
+
+      <AnimatePresence>
+        {successMessage && (
+          <SuccessToast
+            message={successMessage}
+            onDismiss={() => setSuccessMessage(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

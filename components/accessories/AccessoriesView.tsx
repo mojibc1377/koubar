@@ -45,9 +45,9 @@ export function AccessoriesView() {
         </p>
       </Reveal>
 
-      {isLoading && (
+      {isLoading ? (
         <p className="mt-8 text-sm text-muted">در حال بارگذاری اکسسوری‌ها…</p>
-      )}
+      ) : (
       <Stagger className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {accessories.map((item) => (
           <StaggerItem key={item.id}>
@@ -118,6 +118,7 @@ export function AccessoriesView() {
           </StaggerItem>
         ))}
       </Stagger>
+      )}
 
       <section className="mt-20 border-t border-border pt-16">
         <Reveal>

@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api/client";
 import { queryKeys } from "@/lib/query-keys";
 import type { AdminBlog, AdminCafeItem, AdminOrder, AdminRoasteryProduct, AdminUser } from "@/lib/admin/types";
-import type { BlogPost } from "@/lib/types";
+import type { BlogPost, StaffLeaderboardEntry } from "@/lib/types";
 import type { AccessoryItem } from "@/lib/types";
 
 export function useAdminStats() {
@@ -240,6 +240,14 @@ export function useUserAdminMutation() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: queryKeys.adminUsers });
     },
+  });
+}
+
+export function useAdminStaffLeaderboard() {
+  return useQuery({
+    queryKey: queryKeys.adminStaffLeaderboard,
+    queryFn: () =>
+      apiFetch<StaffLeaderboardEntry[]>("/api/admin/staff/leaderboard"),
   });
 }
 

@@ -8,6 +8,8 @@ export const queryKeys = {
   me: ["me"] as const,
   myOrders: ["my-orders"] as const,
   myTransactions: ["my-transactions"] as const,
+  staff: ["staff"] as const,
+  review: (orderId: string) => ["review", orderId] as const,
   adminStats: ["admin", "stats"] as const,
   adminUsers: ["admin", "users"] as const,
   adminOrders: (type?: string) => ["admin", "orders", type ?? "all"] as const,
@@ -15,4 +17,5 @@ export const queryKeys = {
   adminRoastery: ["admin", "roastery"] as const,
   adminAccessories: ["admin", "accessories"] as const,
   adminBlogs: ["admin", "blogs"] as const,
+  adminStaffLeaderboard: ["admin", "staff", "leaderboard"] as const,
 };

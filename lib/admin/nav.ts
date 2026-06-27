@@ -5,5 +5,6 @@ export const adminNav = [
   { href: "/admin/accessories", label: "اکسسوری‌ها", icon: "shop" as const },
   { href: "/admin/blogs", label: "وبلاگ", icon: "blog" as const },
   { href: "/admin/orders", label: "سفارش‌ها", icon: "order" as const },
+  { href: "/admin/staff", label: "امتیاز پرسنل", icon: "profile" as const },
   { href: "/admin/users", label: "کاربران", icon: "profile" as const },
 ] as const;

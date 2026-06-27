@@ -32,6 +32,41 @@ export type Transaction = {
   status: "paid" | "refunded" | "pending";
 };
 
+export type Staff = {
+  id: string;
+  name: string;
+  role: string;
+  avatar?: string | null;
+};
+
+export type Review = {
+  id: string;
+  orderId: string;
+  staffId: string;
+  staffStars: number;
+  foodStars: number;
+  comment?: string;
+  createdAt: string;
+};
+
+export type StaffLeaderboardEntry = {
+  id: string;
+  name: string;
+  role: string;
+  avatar?: string | null;
+  active: boolean;
+  avgStaffStars: number;
+  avgFoodStars: number;
+  totalReviews: number;
+  recentComments: {
+    userName: string;
+    comment: string;
+    date: string;
+    staffStars: number;
+    foodStars: number;
+  }[];
+};
+
 export type BlogContentBlock =
   | { type: "paragraph"; text: string }
   | { type: "heading"; text: string }

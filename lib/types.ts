@@ -52,6 +52,7 @@ export type BlogPost = {
   /** @deprecated use blocks — kept for admin fallback */
   content: string[];
   blocks: BlogContentBlock[];
+  status?: "published" | "draft";
 };
 
 export type AccessoryItem = {

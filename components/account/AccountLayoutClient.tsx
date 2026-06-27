@@ -1,22 +1,16 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { getOrders } from "@/lib/auth-storage";
+import { useMyOrders } from "@/hooks/use-orders";
 import { formatPrice } from "@/lib/format";
 import { ease } from "@/lib/motion";
-import type { Order } from "@/lib/types";
 import { AccountNav } from "./AccountNav";
 
 export function AccountLayoutClient({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const reduce = useReducedMotion();
-  const [orders, setOrders] = useState<Order[]>([]);
-
-  useEffect(() => {
-    setOrders(getOrders());
-  }, []);
+  const { data: orders = [] } = useMyOrders();
   const totalSpent = orders.reduce((s, o) => s + o.total, 0);
   const delivered = orders.filter((o) => o.status === "delivered").length;
 

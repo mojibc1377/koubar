@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { OrderCard } from "@/components/account/OrderCard";
-import { getOrders, getTransactions } from "@/lib/auth-storage";
+import { useMyOrders, useMyTransactions } from "@/hooks/use-orders";
 import { formatPrice } from "@/lib/format";
 import { ease } from "@/lib/motion";
-import type { Order, Transaction } from "@/lib/types";
+import type { Transaction } from "@/lib/types";
 
 const txLabels: Record<Transaction["status"], string> = {
   paid: "پرداخت شده",
@@ -21,14 +20,9 @@ const txColors: Record<Transaction["status"], string> = {
 };
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const { data: orders = [], isLoading: ordersLoading } = useMyOrders();
+  const { data: transactions = [], isLoading: txLoading } = useMyTransactions();
   const reduce = useReducedMotion();
-
-  useEffect(() => {
-    setOrders(getOrders());
-    setTransactions(getTransactions());
-  }, []);
 
   return (
     <div className="space-y-8">
@@ -40,14 +34,21 @@ export default function OrdersPage() {
       >
         <h2 className="text-xl font-bold">سفارش‌های خریداری‌شده</h2>
         <p className="mt-2 text-sm text-muted">
-          تاریخچه خرید از فروشگاه آنلاین و سفارش‌های کافه — برای جزئیات روی هر سفارش بزنید
+          تاریخچه خرید از فروشگاه آنلاین و سفارش‌های کافه
         </p>
+
+        {ordersLoading && (
+          <p className="mt-8 text-sm text-muted">در حال بارگذاری سفارش‌ها…</p>
+        )}
 
         <ul className="mt-8 space-y-4">
           {orders.map((order, index) => (
             <OrderCard key={order.id} order={order} index={index} />
           ))}
         </ul>
+        {!ordersLoading && orders.length === 0 && (
+          <p className="mt-8 text-sm text-muted">هنوز سفارشی ثبت نشده است.</p>
+        )}
       </motion.section>
 
       <motion.section
@@ -57,6 +58,9 @@ export default function OrdersPage() {
         transition={{ duration: 0.45, delay: 0.1, ease }}
       >
         <h2 className="text-xl font-bold">تاریخچه تراکنش‌ها</h2>
+        {txLoading && (
+          <p className="mt-6 text-sm text-muted">در حال بارگذاری تراکنش‌ها…</p>
+        )}
         <div className="mt-6 space-y-3 md:hidden">
           {transactions.map((tx, i) => (
             <motion.div
@@ -72,7 +76,9 @@ export default function OrdersPage() {
                   {txLabels[tx.status]}
                 </span>
               </div>
-              <p className="mt-2 text-xs text-muted">{tx.date} · {tx.method}</p>
+              <p className="mt-2 text-xs text-muted">
+                {tx.date} · {tx.method}
+              </p>
               <p className="mt-2 font-bold">{formatPrice(tx.amount)}</p>
             </motion.div>
           ))}

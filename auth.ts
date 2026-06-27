@@ -50,6 +50,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           phone: user.phone,
           name: user.name ?? "کاربر کوبار",
           address: user.address ?? "",
+          role: user.role,
         };
       },
     }),
@@ -61,6 +62,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.phone = user.phone;
         token.name = user.name;
         token.address = user.address;
+        token.role = user.role;
+      } else if (token.sub && !token.role) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.sub },
+          select: { role: true },
+        });
+        token.role = dbUser?.role ?? "USER";
       }
       return token;
     },
@@ -70,6 +78,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.phone = (token.phone as string) ?? "";
         session.user.name = (token.name as string) ?? "";
         session.user.address = (token.address as string) ?? "";
+        session.user.role = (token.role as "USER" | "ADMIN") ?? "USER";
       }
       return session;
     },

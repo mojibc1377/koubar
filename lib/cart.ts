@@ -1,5 +1,9 @@
+export type ItemSource = "ROASTERY" | "ACCESSORY" | "CAFE";
+
 export type CartItem = {
   id: string;
+  catalogId: string;
+  source: ItemSource;
   title: string;
   price: number;
   image?: string;

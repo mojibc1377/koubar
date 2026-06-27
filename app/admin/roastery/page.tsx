@@ -6,7 +6,7 @@ import { AdminButton } from "@/components/admin/AdminButton";
 import { AdminInput, AdminSelect, AdminTextarea } from "@/components/admin/AdminField";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
-import { initialRoasteryProducts } from "@/lib/admin/mock-data";
+import { useAdminRoastery, useRoasteryMutations } from "@/hooks/use-admin";
 import type { AdminRoasteryProduct } from "@/lib/admin/types";
 import { formatPrice } from "@/lib/format";
 
@@ -20,7 +20,8 @@ const emptyProduct = (): AdminRoasteryProduct => ({
 });
 
 export default function AdminRoasteryPage() {
-  const [products, setProducts] = useState(initialRoasteryProducts);
+  const { data: products = [], isLoading } = useAdminRoastery();
+  const { create, update, remove } = useRoasteryMutations();
   const [search, setSearch] = useState("");
   const [modal, setModal] = useState<"add" | "edit" | null>(null);
   const [draft, setDraft] = useState<AdminRoasteryProduct | null>(null);
@@ -36,17 +37,37 @@ export default function AdminRoasteryPage() {
     window.setTimeout(() => setToast(""), 2500);
   }
 
-  function saveProduct() {
+  async function saveProduct() {
     if (!draft?.title.trim()) return;
-    if (modal === "add") {
-      setProducts((prev) => [draft, ...prev]);
-      showToast("محصول رستری اضافه شد (دمو)");
-    } else {
-      setProducts((prev) => prev.map((p) => (p.id === draft.id ? draft : p)));
-      showToast("محصول ویرایش شد (دمو)");
+    try {
+      if (modal === "add") {
+        await create.mutateAsync({
+          slug: draft.id,
+          title: draft.title,
+          description: draft.description,
+          price: draft.price,
+          badge: draft.badge,
+          variant: draft.variant,
+          inStock: draft.inStock,
+        });
+        showToast("محصول اضافه شد");
+      } else {
+        await update.mutateAsync({
+          slug: draft.id,
+          title: draft.title,
+          description: draft.description,
+          price: draft.price,
+          badge: draft.badge,
+          variant: draft.variant,
+          inStock: draft.inStock,
+        });
+        showToast("محصول ویرایش شد");
+      }
+      setModal(null);
+      setDraft(null);
+    } catch {
+      showToast("خطا در ذخیره");
     }
-    setModal(null);
-    setDraft(null);
   }
 
   return (
@@ -65,6 +86,8 @@ export default function AdminRoasteryPage() {
           </AdminButton>
         }
       />
+
+      {isLoading && <p className="mb-4 text-sm text-[#fffbf5]/60">در حال بارگذاری…</p>}
 
       <AdminInput
         label="جستجو"
@@ -107,10 +130,6 @@ export default function AdminRoasteryPage() {
             </div>
             <p className="mt-2 line-clamp-2 text-xs text-[#fffbf5]/60">{product.description}</p>
             <p className="mt-4 text-lg font-extrabold">{formatPrice(product.price)}</p>
-            <p className="mt-1 text-xs text-[#fffbf5]/50">
-              {product.badge && `${product.badge} · `}
-              {product.variant}
-            </p>
             <div className="mt-4 flex gap-2">
               <AdminButton
                 variant="secondary"
@@ -125,10 +144,10 @@ export default function AdminRoasteryPage() {
               <AdminButton
                 variant="danger"
                 className="!text-xs"
-                onClick={() => {
+                onClick={async () => {
                   if (confirm("حذف شود؟")) {
-                    setProducts((prev) => prev.filter((p) => p.id !== product.id));
-                    showToast("محصول حذف شد (دمو)");
+                    await remove.mutateAsync(product.id);
+                    showToast("حذف شد");
                   }
                 }}
               >
@@ -150,6 +169,15 @@ export default function AdminRoasteryPage() {
       >
         {draft && (
           <div className="grid gap-4 sm:grid-cols-2">
+            {modal === "add" && (
+              <div className="sm:col-span-2">
+                <AdminInput
+                  label="شناسه (slug)"
+                  value={draft.id}
+                  onChange={(e) => setDraft({ ...draft, id: e.target.value })}
+                />
+              </div>
+            )}
             <div className="sm:col-span-2">
               <AdminInput
                 label="عنوان"

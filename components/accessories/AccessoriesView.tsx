@@ -8,8 +8,7 @@ import { AnimatedActionButton } from "@/components/lightswind/button";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { useCart } from "@/context/CartContext";
-import { accessories } from "@/lib/accessories";
-import { giftItems } from "@/lib/data";
+import { useAccessories, useGifts } from "@/hooks/use-catalog";
 import { formatPrice } from "@/lib/format";
 import { spring } from "@/lib/motion";
 import { Z } from "@/lib/z-index";
@@ -18,12 +17,16 @@ import type { AccessoryItem } from "@/lib/types";
 export function AccessoriesView() {
   const reduce = useReducedMotion();
   const { addItem } = useCart();
+  const { data: accessories = [], isLoading } = useAccessories();
+  const { data: giftItems = [] } = useGifts();
   const [selected, setSelected] = useState<AccessoryItem | null>(null);
   const [addedId, setAddedId] = useState<string | null>(null);
 
   const addToCart = (item: AccessoryItem) => {
     addItem({
       id: `acc-${item.id}`,
+      catalogId: item.id,
+      source: "ACCESSORY",
       title: item.title,
       price: item.price,
       image: item.image,
@@ -42,6 +45,9 @@ export function AccessoriesView() {
         </p>
       </Reveal>
 
+      {isLoading && (
+        <p className="mt-8 text-sm text-muted">در حال بارگذاری اکسسوری‌ها…</p>
+      )}
       <Stagger className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {accessories.map((item) => (
           <StaggerItem key={item.id}>

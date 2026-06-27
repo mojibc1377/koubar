@@ -4,7 +4,7 @@ import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useState } from "react";
 import { formatPrice } from "@/lib/format";
-import { cafeMenu } from "@/lib/cafe-menu";
+import { useCafeMenu } from "@/hooks/use-catalog";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { spring } from "@/lib/motion";
@@ -16,12 +16,15 @@ import { AnimatedActionButton } from "../lightswind/button";
 export function CafeMenuView() {
   const reduce = useReducedMotion();
   const { addItem } = useCart();
+  const { data: cafeMenu = [], isLoading } = useCafeMenu();
   const [selectedItem, setSelectedItem] = useState<CafeMenuItem | null>(null);
   const [addedItemId, setAddedItemId] = useState<string | null>(null);
 
   const addToCart = (item: CafeMenuItem) => {
     addItem({
       id: `cafe-${item.id}`,
+      catalogId: item.id,
+      source: "CAFE",
       title: item.name,
       price: item.price,
       image: item.image,
@@ -30,6 +33,10 @@ export function CafeMenuView() {
     setAddedItemId(item.id);
     window.setTimeout(() => setAddedItemId((id) => (id === item.id ? null : id)), 1400);
   };
+
+  if (isLoading) {
+    return <p className="py-12 text-center text-muted">در حال بارگذاری منو…</p>;
+  }
 
   return (
     <>

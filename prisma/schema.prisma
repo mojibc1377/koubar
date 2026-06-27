@@ -7,13 +7,62 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum OrderType {
+  SHOP
+  CAFE
+  MIXED
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  PROCESSING
+  DELIVERED
+  CANCELLED
+}
+
+enum TransactionStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum RoasteryVariant {
+  AFRICAN
+  KENYA
+  STREET
+}
+
+enum ItemSource {
+  ROASTERY
+  ACCESSORY
+  CAFE
+}
+
 model User {
   id        String   @id @default(cuid())
   phone     String   @unique
   name      String?
   address   String?
+  role      UserRole @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  orders       Order[]
+  transactions Transaction[]
 }
 
 model PhoneOtp {
@@ -22,4 +71,144 @@ model PhoneOtp {
   code      String
   expiresAt DateTime
   createdAt DateTime @default(now())
+}
+
+model CafeCategory {
+  id        String         @id
+  name      String
+  sortOrder Int            @default(0)
+  items     CafeMenuItem[]
+}
+
+model CafeMenuItem {
+  id              String       @id @default(cuid())
+  slug            String       @unique
+  categoryId      String
+  category        CafeCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name            String
+  description     String
+  longDescription String?
+  image           String
+  price           Int
+  badge           String?
+  notes           Json         @default("[]")
+  active          Boolean      @default(true)
+  sortOrder       Int          @default(0)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+}
+
+model RoasteryProduct {
+  id              String          @id @default(cuid())
+  slug            String          @unique
+  title           String
+  description     String
+  longDescription String?
+  image           String
+  price           Int
+  badge           String?
+  variant         RoasteryVariant @default(AFRICAN)
+  inStock         Boolean         @default(true)
+  active          Boolean         @default(true)
+  sortOrder       Int             @default(0)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model Accessory {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  description     String
+  longDescription String?
+  image           String
+  price           Int
+  badge           String?
+  category        String
+  notes           Json     @default("[]")
+  inStock         Boolean  @default(true)
+  active          Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model GiftItem {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  image       String
+  linkHref    String   @default("/#gifts")
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BlogPost {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  title       String
+  excerpt     String
+  image       String
+  author      String
+  category    String
+  readMinutes Int
+  status      BlogStatus @default(DRAFT)
+  blocks      Json       @default("[]")
+  publishedAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  userId          String
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type            OrderType
+  status          OrderStatus @default(PENDING)
+  total           Int
+  shippingName    String
+  paymentAuthority  String?
+   paymentRefId      String?
+  shippingPhone   String
+  shippingAddress String
+  items           OrderItem[]
+  transactions    Transaction[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model OrderItem {
+  id        String     @id @default(cuid())
+  orderId   String
+  order     Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  source    ItemSource
+  catalogId String
+  title     String
+  image     String?
+  price     Int
+  quantity  Int
+
+  @@index([orderId])
+}
+
+model Transaction {
+  id        String            @id @default(cuid())
+  txNumber  String            @unique
+  orderId   String
+  order     Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount    Int
+  method    String
+  status    TransactionStatus @default(PAID)
+  createdAt DateTime          @default(now())
+
+  @@index([userId])
+  @@index([orderId])
 }

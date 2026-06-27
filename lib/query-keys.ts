@@ -1,0 +1,18 @@
+export const queryKeys = {
+  cafeMenu: ["cafe-menu"] as const,
+  roastery: ["roastery"] as const,
+  accessories: ["accessories"] as const,
+  gifts: ["gifts"] as const,
+  blogs: (status?: string) => ["blogs", status ?? "published"] as const,
+  blog: (slug: string) => ["blog", slug] as const,
+  me: ["me"] as const,
+  myOrders: ["my-orders"] as const,
+  myTransactions: ["my-transactions"] as const,
+  adminStats: ["admin", "stats"] as const,
+  adminUsers: ["admin", "users"] as const,
+  adminOrders: (type?: string) => ["admin", "orders", type ?? "all"] as const,
+  adminCafe: ["admin", "cafe"] as const,
+  adminRoastery: ["admin", "roastery"] as const,
+  adminAccessories: ["admin", "accessories"] as const,
+  adminBlogs: ["admin", "blogs"] as const,
+};

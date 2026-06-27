@@ -7,6 +7,7 @@ declare module "next-auth" {
     phone: string;
     name: string;
     address: string;
+    role: "USER" | "ADMIN";
   }
 
   interface Session {
@@ -15,6 +16,7 @@ declare module "next-auth" {
       phone: string;
       name: string;
       address: string;
+      role: "USER" | "ADMIN";
     };
   }
 }
@@ -23,5 +25,6 @@ declare module "next-auth/jwt" {
   interface JWT {
     phone?: string;
     address?: string;
+    role?: "USER" | "ADMIN";
   }
 }

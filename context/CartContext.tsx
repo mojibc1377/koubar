@@ -23,6 +23,7 @@ type CartContextValue = {
   toast: CartToastPayload | null;
   addItem: (item: Omit<CartItem, "quantity"> & { quantity?: number }) => void;
   removeItem: (id: string) => void;
+  clearCart: () => void;
   openCart: () => void;
   closeCart: () => void;
   clearToast: () => void;
@@ -37,6 +38,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setItems(readCart());
     setReady(true);
   }, []);
@@ -72,6 +74,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems((prev) => prev.filter((p) => p.id !== id));
   }, []);
 
+  const clearCart = useCallback(() => setItems([]), []);
+
   const count = useMemo(
     () => items.reduce((sum, i) => sum + i.quantity, 0),
     [items],
@@ -92,6 +96,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         toast,
         addItem,
         removeItem,
+        clearCart,
         openCart,
         closeCart,
         clearToast,

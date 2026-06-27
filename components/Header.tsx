@@ -15,7 +15,7 @@ import { useCart } from "@/context/CartContext";
 
 export function Header() {
   const { mode } = usePlatformMode();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { openCart } = useCart();
   const links = getNavLinks(mode);
   const reduce = useReducedMotion();
@@ -78,6 +78,14 @@ export function Header() {
                 >
                   سلام، {firstName}
                 </Link>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="rounded-full border border-accent/40 bg-accent/20 px-3 py-1.5 text-xs font-semibold text-foreground transition hover:bg-accent/30"
+                  >
+                    پنل مدیریت
+                  </Link>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

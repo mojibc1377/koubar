@@ -49,7 +49,15 @@ export function ProductCard({
   const [added, setAdded] = useState(false);
 
   function handleAdd() {
-    addItem({ id, title, price, type: "shop", image: "/images/hero.png" });
+    addItem({
+      id: `roastery-${id}`,
+      catalogId: id,
+      source: "ROASTERY",
+      title,
+      price,
+      type: "shop",
+      image: "/images/hero.png",
+    });
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1400);
   }

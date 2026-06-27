@@ -3,25 +3,39 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
-import { adminNav, adminStats, initialOrders } from "@/lib/admin/mock-data";
+import { adminNav } from "@/lib/admin/nav";
+import { useAdminStats } from "@/hooks/use-admin";
 import { formatPrice } from "@/lib/format";
 
-const cards = [
-  { label: "درآمد امروز", value: formatPrice(adminStats.revenueToday) },
-  { label: "سفارش‌های امروز", value: adminStats.ordersToday.toLocaleString("fa-IR") },
-  { label: "کاربران", value: adminStats.usersTotal.toLocaleString("fa-IR") },
-  { label: "مقالات منتشرشده", value: adminStats.blogsPublished.toLocaleString("fa-IR") },
-];
-
 export default function AdminDashboardPage() {
-  const recent = initialOrders.slice(0, 4);
+  const { data: stats, isLoading } = useAdminStats();
+
+  const cards = [
+    { label: "درآمد امروز", value: formatPrice(stats?.revenueToday ?? 0) },
+    {
+      label: "سفارش‌های امروز",
+      value: (stats?.ordersToday ?? 0).toLocaleString("fa-IR"),
+    },
+    {
+      label: "کاربران",
+      value: (stats?.usersTotal ?? 0).toLocaleString("fa-IR"),
+    },
+    {
+      label: "مقالات منتشرشده",
+      value: (stats?.blogsPublished ?? 0).toLocaleString("fa-IR"),
+    },
+  ];
+
+  const recent = stats?.recentOrders ?? [];
 
   return (
     <>
       <AdminPageHeader
         title="داشبورد"
-        description="نمای کلی فروشگاه، کافه و محتوا — فقط رابط کاربری (داده آزمایشی)"
+        description="نمای کلی فروشگاه، کافه و محتوا"
       />
+
+      {isLoading && <p className="text-sm text-[#fffbf5]/60">در حال بارگذاری…</p>}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map((card, i) => (

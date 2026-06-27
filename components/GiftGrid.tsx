@@ -3,13 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { giftItems } from "@/lib/data";
+import { useGifts } from "@/hooks/use-catalog";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { ease, spring } from "@/lib/motion";
 
 export function GiftGrid() {
   const reduce = useReducedMotion();
+  const { data: giftItems = [] } = useGifts();
 
   return (
     <section id="gifts" className="relative overflow-hidden border-b border-border py-16 lg:py-24">
@@ -22,7 +23,7 @@ export function GiftGrid() {
 
         <Stagger className="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           {giftItems.map((item) => (
-            <StaggerItem key={item.title}>
+            <StaggerItem key={item.id}>
               <motion.article
                 className="group"
                 whileHover={reduce ? {} : { y: -8 }}
@@ -47,7 +48,7 @@ export function GiftGrid() {
                 <h3 className="mt-5 text-lg font-bold leading-8">{item.title}</h3>
                 <p className="mt-2 text-sm leading-7 text-muted">{item.description}</p>
                 <Link
-                  href="#"
+                  href={item.linkHref}
                   className="mt-4 inline-flex items-center gap-1 text-sm text-accent transition hover:text-foreground"
                 >
                   مشاهده و خرید

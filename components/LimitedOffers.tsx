@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { useRef } from "react";
-import { limitedProducts } from "@/lib/data";
+import { useRoasteryProducts } from "@/hooks/use-catalog";
 import { FloatingOrbs } from "@/components/motion/FloatingOrbs";
 import { Reveal } from "@/components/motion/Reveal";
 import { CarouselArrows } from "./icons";
@@ -12,6 +12,7 @@ import { ease } from "@/lib/motion";
 export function LimitedOffers() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+  const { data: products = [], isLoading } = useRoasteryProducts();
 
   const scroll = (direction: "prev" | "next") => {
     const el = scrollRef.current;
@@ -61,8 +62,20 @@ export function LimitedOffers() {
           className="flex gap-6 overflow-x-auto pb-4 scrollbar-none"
           style={{ scrollbarWidth: "none" }}
         >
-          {limitedProducts.map((product, index) => (
-            <ProductCard key={product.id} {...product} index={index} />
+          {isLoading && (
+            <p className="text-sm text-muted">در حال بارگذاری محصولات…</p>
+          )}
+          {products.map((product, index) => (
+            <ProductCard
+              key={product.id}
+              id={product.id}
+              title={product.title}
+              description={product.description}
+              price={product.price}
+              badge={product.badge ?? "ویژه"}
+              variant={product.variant}
+              index={index}
+            />
           ))}
         </div>
       </div>

@@ -22,6 +22,7 @@ export type AdminUser = {
   address: string;
   joinedAt: string;
   ordersCount: number;
+  role?: "USER" | "ADMIN";
 };
 
 export type AdminBlog = BlogPost & {

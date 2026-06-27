@@ -6,11 +6,11 @@ import { AdminButton } from "@/components/admin/AdminButton";
 import { AdminInput } from "@/components/admin/AdminField";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
-import { initialUsers } from "@/lib/admin/mock-data";
+import { useAdminUsers } from "@/hooks/use-admin";
 import type { AdminUser } from "@/lib/admin/types";
 
 export default function AdminUsersPage() {
-  const [users] = useState(initialUsers);
+  const { data: users = [], isLoading } = useAdminUsers();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<AdminUser | null>(null);
 
@@ -32,6 +32,8 @@ export default function AdminUsersPage() {
         description="لیست کاربران ثبت‌نام‌شده با موبایل"
       />
 
+      {isLoading && <p className="mb-4 text-sm text-[#fffbf5]/60">در حال بارگذاری…</p>}
+
       <AdminInput
         label="جستجو"
         placeholder="نام، موبایل یا آدرس..."
@@ -48,6 +50,7 @@ export default function AdminUsersPage() {
               <th className="p-4">موبایل</th>
               <th className="p-4">تاریخ عضویت</th>
               <th className="p-4">سفارش‌ها</th>
+              <th className="p-4">نقش</th>
               <th className="p-4">عملیات</th>
             </tr>
           </thead>
@@ -59,17 +62,18 @@ export default function AdminUsersPage() {
                 className="border-b border-[#fffbf50d] hover:bg-[#fffbf508]"
               >
                 <td className="p-4 font-semibold">{user.name}</td>
-                <td className="p-4 font-mono text-xs" dir="ltr">
+                <td className="p-4" dir="ltr">
                   {user.phone}
                 </td>
-                <td className="p-4 text-[#fffbf5]/70">{user.joinedAt}</td>
+                <td className="p-4 text-[#fffbf5]/60">{user.joinedAt}</td>
+                <td className="p-4">{user.ordersCount.toLocaleString("fa-IR")}</td>
                 <td className="p-4">
-                  {user.ordersCount.toLocaleString("fa-IR")}
+                  {"role" in user && user.role === "ADMIN" ? "مدیر" : "کاربر"}
                 </td>
                 <td className="p-4">
                   <AdminButton
                     variant="secondary"
-                    className="!py-1.5 !px-3 !text-xs"
+                    className="!text-xs"
                     onClick={() => setSelected(user)}
                   >
                     جزئیات
@@ -83,36 +87,23 @@ export default function AdminUsersPage() {
 
       <AdminModal
         open={selected !== null}
-        title="پروفایل کاربر"
+        title={selected?.name ?? "کاربر"}
         onClose={() => setSelected(null)}
       >
         {selected && (
-          <dl className="space-y-4 text-sm">
+          <dl className="space-y-3 text-sm">
             <div>
-              <dt className="text-[#fffbf5]/55">نام</dt>
-              <dd className="mt-1 font-bold">{selected.name}</dd>
+              <dt className="text-[#fffbf5]/60">موبایل</dt>
+              <dd dir="ltr">{selected.phone}</dd>
             </div>
             <div>
-              <dt className="text-[#fffbf5]/55">موبایل</dt>
-              <dd className="mt-1 font-mono" dir="ltr">
-                {selected.phone}
-              </dd>
+              <dt className="text-[#fffbf5]/60">آدرس</dt>
+              <dd>{selected.address || "—"}</dd>
             </div>
             <div>
-              <dt className="text-[#fffbf5]/55">آدرس</dt>
-              <dd className="mt-1">{selected.address}</dd>
+              <dt className="text-[#fffbf5]/60">تعداد سفارش</dt>
+              <dd>{selected.ordersCount.toLocaleString("fa-IR")}</dd>
             </div>
-            <div>
-              <dt className="text-[#fffbf5]/55">عضویت</dt>
-              <dd className="mt-1">{selected.joinedAt}</dd>
-            </div>
-            <div>
-              <dt className="text-[#fffbf5]/55">تعداد سفارش</dt>
-              <dd className="mt-1">{selected.ordersCount.toLocaleString("fa-IR")}</dd>
-            </div>
-            <AdminButton variant="ghost" onClick={() => setSelected(null)}>
-              بستن
-            </AdminButton>
           </dl>
         )}
       </AdminModal>

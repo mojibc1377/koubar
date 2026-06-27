@@ -6,7 +6,8 @@ import { AdminButton } from "@/components/admin/AdminButton";
 import { AdminInput, AdminSelect, AdminTextarea } from "@/components/admin/AdminField";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
-import { initialBlogs } from "@/lib/admin/mock-data";
+import { useBlogMutations } from "@/hooks/use-admin";
+import { useAdminBlogs } from "@/hooks/use-blogs";
 import type { AdminBlog } from "@/lib/admin/types";
 
 const emptyBlog = (): AdminBlog => ({
@@ -24,7 +25,8 @@ const emptyBlog = (): AdminBlog => ({
 });
 
 export default function AdminBlogsPage() {
-  const [blogs, setBlogs] = useState(initialBlogs);
+  const { data: blogs = [], isLoading } = useAdminBlogs();
+  const { create, update, remove } = useBlogMutations();
   const [filter, setFilter] = useState<"all" | "published" | "draft">("all");
   const [modal, setModal] = useState<"add" | "edit" | null>(null);
   const [draft, setDraft] = useState<AdminBlog | null>(null);
@@ -40,7 +42,7 @@ export default function AdminBlogsPage() {
     window.setTimeout(() => setToast(""), 2500);
   }
 
-  function saveBlog() {
+  async function saveBlog() {
     if (!draft?.title.trim()) return;
     const slug =
       draft.slug.trim() ||
@@ -48,16 +50,31 @@ export default function AdminBlogsPage() {
         .replace(/\s+/g, "-")
         .slice(0, 40)
         .replace(/[^\w\u0600-\u06FF-]/g, "");
-    const next = { ...draft, slug };
-    if (modal === "add") {
-      setBlogs((prev) => [next, ...prev]);
-      showToast("مقاله اضافه شد (دمو)");
-    } else {
-      setBlogs((prev) => prev.map((b) => (b.slug === draft.slug ? next : b)));
-      showToast("مقاله ویرایش شد (دمو)");
+    try {
+      const payload = {
+        slug,
+        title: draft.title,
+        excerpt: draft.excerpt,
+        image: draft.image,
+        author: draft.author,
+        category: draft.category,
+        readMinutes: draft.readMinutes,
+        status: draft.status,
+        blocks: draft.blocks,
+      };
+      if (modal === "add") {
+        await create.mutateAsync(payload);
+        showToast("مقاله اضافه شد");
+      } else {
+        const { slug: _newSlug, ...rest } = payload;
+        await update.mutateAsync({ slug: draft.slug, ...rest });
+        showToast("مقاله ویرایش شد");
+      }
+      setModal(null);
+      setDraft(null);
+    } catch {
+      showToast("خطا در ذخیره");
     }
-    setModal(null);
-    setDraft(null);
   }
 
   return (
@@ -76,6 +93,8 @@ export default function AdminBlogsPage() {
           </AdminButton>
         }
       />
+
+      {isLoading && <p className="mb-4 text-sm text-[#fffbf5]/60">در حال بارگذاری…</p>}
 
       <div className="mb-6 flex flex-wrap gap-2">
         {(["all", "published", "draft"] as const).map((f) => (
@@ -135,7 +154,7 @@ export default function AdminBlogsPage() {
                 variant="secondary"
                 className="!text-xs"
                 onClick={() => {
-                  setDraft({ ...blog });
+                  setDraft({ ...blog, status: blog.status ?? "draft" });
                   setModal("edit");
                 }}
               >
@@ -146,8 +165,9 @@ export default function AdminBlogsPage() {
                 className="!text-xs"
                 onClick={() => {
                   if (confirm("مقاله حذف شود؟")) {
-                    setBlogs((prev) => prev.filter((b) => b.slug !== blog.slug));
-                    showToast("مقاله حذف شد (دمو)");
+                    void remove.mutateAsync(blog.slug).then(() =>
+                      showToast("مقاله حذف شد"),
+                    );
                   }
                 }}
               >

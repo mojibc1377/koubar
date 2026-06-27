@@ -6,7 +6,7 @@ import { AdminButton } from "@/components/admin/AdminButton";
 import { AdminInput, AdminSelect, AdminTextarea } from "@/components/admin/AdminField";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
-import { initialCafeItems } from "@/lib/admin/mock-data";
+import { useAdminCafe, useCafeMutations } from "@/hooks/use-admin";
 import type { AdminCafeItem } from "@/lib/admin/types";
 import { formatPrice } from "@/lib/format";
 
@@ -27,7 +27,8 @@ const emptyItem = (): AdminCafeItem => ({
 });
 
 export default function AdminCafeMenuPage() {
-  const [items, setItems] = useState(initialCafeItems);
+  const { data: items = [], isLoading } = useAdminCafe();
+  const { create, update, remove } = useCafeMutations();
   const [search, setSearch] = useState("");
   const [modal, setModal] = useState<"add" | "edit" | null>(null);
   const [draft, setDraft] = useState<AdminCafeItem | null>(null);
@@ -59,25 +60,41 @@ export default function AdminCafeMenuPage() {
     setModal("edit");
   }
 
-  function saveItem() {
+  async function saveItem() {
     if (!draft?.name.trim()) return;
-    const cat = categories.find((c) => c.id === draft.categoryId);
-    const next = { ...draft, categoryName: cat?.name ?? draft.categoryName };
-    if (modal === "add") {
-      setItems((prev) => [next, ...prev]);
-      showToast("آیتم کافه اضافه شد (دمو)");
-    } else {
-      setItems((prev) => prev.map((i) => (i.id === next.id ? next : i)));
-      showToast("آیتم کافه ویرایش شد (دمو)");
+    try {
+      if (modal === "add") {
+        await create.mutateAsync({
+          slug: draft.id,
+          name: draft.name,
+          description: draft.description,
+          price: draft.price,
+          categoryId: draft.categoryId,
+          badge: draft.badge,
+        });
+        showToast("آیتم اضافه شد");
+      } else {
+        await update.mutateAsync({
+          slug: draft.id,
+          name: draft.name,
+          description: draft.description,
+          price: draft.price,
+          categoryId: draft.categoryId,
+          badge: draft.badge,
+        });
+        showToast("آیتم ویرایش شد");
+      }
+      setModal(null);
+      setDraft(null);
+    } catch {
+      showToast("خطا در ذخیره");
     }
-    setModal(null);
-    setDraft(null);
   }
 
-  function deleteItem(id: string) {
+  async function deleteItem(id: string) {
     if (!confirm("این آیتم حذف شود؟")) return;
-    setItems((prev) => prev.filter((i) => i.id !== id));
-    showToast("آیتم حذف شد (دمو)");
+    await remove.mutateAsync(id);
+    showToast("حذف شد");
   }
 
   return (
@@ -87,6 +104,8 @@ export default function AdminCafeMenuPage() {
         description="افزودن، ویرایش و حذف نوشیدنی‌ها و آیتم‌های منو"
         action={<AdminButton onClick={openAdd}>+ آیتم جدید</AdminButton>}
       />
+
+      {isLoading && <p className="mb-4 text-sm text-[#fffbf5]/60">در حال بارگذاری…</p>}
 
       <AdminInput
         label="جستجو"

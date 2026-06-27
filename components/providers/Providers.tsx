@@ -1,6 +1,7 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
+import { QueryProvider } from "@/components/providers/QueryProvider";
 import { CartModal } from "@/components/cart/CartModal";
 import { CartToast } from "@/components/cart/CartToast";
 import { PlatformTheme } from "@/components/PlatformTheme";
@@ -11,6 +12,7 @@ import { PlatformModeProvider } from "@/context/PlatformModeContext";
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider refetchOnWindowFocus>
+      <QueryProvider>
       <PlatformModeProvider>
         <CartProvider>
           <PlatformTheme />
@@ -20,6 +22,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <CartModal />
         </CartProvider>
       </PlatformModeProvider>
+      </QueryProvider>
     </SessionProvider>
   );
 }

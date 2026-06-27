@@ -8,6 +8,7 @@ export type AuthUser = {
   phone: string;
   name: string;
   address: string;
+  role: "USER" | "ADMIN";
 };
 
 export function useAuth() {
@@ -19,8 +20,11 @@ export function useAuth() {
         phone: session.user.phone,
         name: session.user.name ?? "",
         address: session.user.address ?? "",
+        role: session.user.role ?? "USER",
       }
     : null;
+
+  const isAdmin = user?.role === "ADMIN";
 
   const isReady = status !== "loading";
   const isAuthenticated = status === "authenticated";
@@ -99,5 +103,6 @@ export function useAuth() {
     logout,
     updateProfile,
     refreshSession: update,
+    isAdmin,
   };
 }

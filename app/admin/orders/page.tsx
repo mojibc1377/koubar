@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { AdminButton } from "@/components/admin/AdminButton";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
-import { initialOrders } from "@/lib/admin/mock-data";
+import { useAdminOrders, useOrderStatusMutation } from "@/hooks/use-admin";
 import type { AdminOrder } from "@/lib/admin/types";
 import { formatPrice } from "@/lib/format";
 
@@ -22,17 +22,23 @@ const statusColors = {
 };
 
 export default function AdminOrdersPage() {
-  const [orders] = useState(initialOrders);
   const [tab, setTab] = useState<"all" | "shop" | "cafe">("all");
+  const { data: orders = [], isLoading } = useAdminOrders(
+    tab === "all" ? undefined : tab,
+  );
+  const statusMutation = useOrderStatusMutation();
   const [selected, setSelected] = useState<AdminOrder | null>(null);
 
-  const filtered = useMemo(() => {
-    if (tab === "all") return orders;
-    return orders.filter((o) => o.type === tab);
-  }, [orders, tab]);
+  const shopCount = useMemo(
+    () => orders.filter((o) => o.type === "shop").length,
+    [orders],
+  );
+  const cafeCount = useMemo(
+    () => orders.filter((o) => o.type === "cafe").length,
+    [orders],
+  );
 
-  const shopCount = orders.filter((o) => o.type === "shop").length;
-  const cafeCount = orders.filter((o) => o.type === "cafe").length;
+  const filtered = orders;
 
   return (
     <>
@@ -41,12 +47,14 @@ export default function AdminOrdersPage() {
         description="مشاهده سفارش‌های رستری (فروشگاه) و کافه"
       />
 
+      {isLoading && <p className="mb-4 text-sm text-[#fffbf5]/60">در حال بارگذاری…</p>}
+
       <div className="mb-6 flex flex-wrap gap-2">
         {(
           [
-            { key: "all", label: `همه (${orders.length})` },
-            { key: "shop", label: `رستری (${shopCount})` },
-            { key: "cafe", label: `کافه (${cafeCount})` },
+            { key: "all", label: `همه` },
+            { key: "shop", label: `رستری` },
+            { key: "cafe", label: `کافه` },
           ] as const
         ).map((t) => (
           <button
@@ -82,27 +90,10 @@ export default function AdminOrdersPage() {
                 layout
                 className="border-b border-[#fffbf50d] hover:bg-[#fffbf508]"
               >
-                <td className="p-4 font-mono text-xs" dir="ltr">
-                  {order.id}
-                </td>
-                <td className="p-4">
-                  <span
-                    className={`rounded-full px-2 py-1 text-xs ${
-                      order.type === "shop"
-                        ? "bg-[#575b49]/50"
-                        : "bg-[#fffbf515]"
-                    }`}
-                  >
-                    {order.type === "shop" ? "رستری" : "کافه"}
-                  </span>
-                </td>
-                <td className="p-4">
-                  <p className="font-medium">{order.customerName}</p>
-                  <p className="text-xs text-[#fffbf5]/50" dir="ltr">
-                    {order.customerPhone}
-                  </p>
-                </td>
-                <td className="p-4 text-[#fffbf5]/70">{order.date}</td>
+                <td className="p-4 font-mono text-xs">{order.id}</td>
+                <td className="p-4">{order.type === "shop" ? "رستری" : "کافه"}</td>
+                <td className="p-4">{order.customerName}</td>
+                <td className="p-4 text-[#fffbf5]/60">{order.date}</td>
                 <td className="p-4">
                   <span
                     className={`rounded-full px-2 py-1 text-xs ${statusColors[order.status]}`}
@@ -114,7 +105,7 @@ export default function AdminOrdersPage() {
                 <td className="p-4">
                   <AdminButton
                     variant="secondary"
-                    className="!py-1.5 !px-3 !text-xs"
+                    className="!text-xs"
                     onClick={() => setSelected(order)}
                   >
                     مشاهده
@@ -128,46 +119,41 @@ export default function AdminOrdersPage() {
 
       <AdminModal
         open={selected !== null}
-        title={selected ? `سفارش ${selected.id}` : ""}
+        title={`سفارش ${selected?.id ?? ""}`}
         onClose={() => setSelected(null)}
         wide
       >
         {selected && (
           <div className="space-y-4 text-sm">
-            <div className="grid gap-3 sm:grid-cols-2">
-              <p>
-                <span className="text-[#fffbf5]/55">مشتری: </span>
-                {selected.customerName}
-              </p>
-              <p dir="ltr">
-                <span className="text-[#fffbf5]/55">موبایل: </span>
-                {selected.customerPhone}
-              </p>
-              <p>
-                <span className="text-[#fffbf5]/55">نوع: </span>
-                {selected.type === "shop" ? "رستری" : "کافه"}
-              </p>
-              <p>
-                <span className="text-[#fffbf5]/55">وضعیت: </span>
-                {statusLabels[selected.status]}
-              </p>
-            </div>
+            <p>
+              <span className="text-[#fffbf5]/60">مشتری: </span>
+              {selected.customerName} · {selected.customerPhone}
+            </p>
             <ul className="space-y-2 rounded-xl border border-[#fffbf51a] p-4">
               {selected.items.map((item) => (
-                <li key={item.id + item.title} className="flex justify-between gap-3">
+                <li key={item.id} className="flex justify-between gap-4">
                   <span>
                     {item.title} × {item.quantity.toLocaleString("fa-IR")}
                   </span>
-                  <span>{formatPrice(item.price * item.quantity)}</span>
+                  <span className="font-bold">{formatPrice(item.price * item.quantity)}</span>
                 </li>
               ))}
             </ul>
-            <p className="text-lg font-bold">جمع: {formatPrice(selected.total)}</p>
-            <div className="flex gap-2 pt-2">
-              <AdminButton variant="secondary">تغییر وضعیت (دمو)</AdminButton>
-              <AdminButton variant="ghost" onClick={() => setSelected(null)}>
-                بستن
-              </AdminButton>
+            <p className="text-lg font-extrabold">جمع: {formatPrice(selected.total)}</p>
+            <div className="flex flex-wrap gap-2">
+              {(["processing", "delivered", "cancelled"] as const).map((status) => (
+                <AdminButton
+                  key={status}
+                  variant="secondary"
+                  className="!text-xs"
+                  onClick={async () => {
+                    await statusMutation.mutateAsync({ id: selected.id, status });
+                    setSelected({ ...selected, status });
+                  }}
+                >
+                  {statusLabels[status]}
+                </AdminButton>
+              ))}
             </div>
           </div>
         )}

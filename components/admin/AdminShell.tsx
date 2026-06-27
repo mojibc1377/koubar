@@ -5,13 +5,14 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { AppIcon } from "@/components/AppIcon";
 import { BrandLogo } from "@/components/BrandLogo";
-import { adminNav } from "@/lib/admin/mock-data";
+import { adminNav } from "@/lib/admin/nav";
 import { spring } from "@/lib/motion";
 
 const iconMap = {
   dashboard: "shop" as const,
   cafe: "cafe" as const,
   beans: "beans" as const,
+  shop: "shop" as const,
   blog: "blog" as const,
   order: "order" as const,
   profile: "profile" as const,
@@ -78,8 +79,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               <div className="lg:hidden">
                 <BrandLogo variant="farsi" className="brand-logo max-w-[72px]" />
               </div>
-              <p className="rounded-full border border-amber-500/40 bg-amber-500/15 px-3 py-1 text-xs text-amber-200">
-                UI دمو — داده‌ها موقت و در مرورگر ذخیره نمی‌شوند
+              <p className="rounded-full border border-emerald-500/40 bg-emerald-500/15 px-3 py-1 text-xs text-emerald-200">
+                متصل به پایگاه داده
               </p>
               <div className="flex items-center gap-2 text-sm">
                 <span className="hidden sm:inline text-[#fffbf5]/60">مدیر سیستم</span>

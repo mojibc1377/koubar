@@ -1,0 +1,11 @@
+{
+  "app": "koubar",
+  "port": 3000,
+  "next": {
+    "mirror": true
+  },
+  "build": {
+    "location": "iran"
+  },
+  "disks": []
+}

@@ -20,14 +20,6 @@ export type RoasteryProduct = {
   inStock: boolean;
 };
 
-export type GiftItemDto = {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  linkHref: string;
-};
-
 export function useCafeMenu() {
   return useQuery({
     queryKey: queryKeys.cafeMenu,
@@ -49,9 +41,3 @@ export function useAccessories() {
   });
 }
 
-export function useGifts() {
-  return useQuery({
-    queryKey: queryKeys.gifts,
-    queryFn: () => apiFetch<GiftItemDto[]>("/api/gifts"),
-  });
-}

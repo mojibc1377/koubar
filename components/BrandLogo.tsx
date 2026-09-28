@@ -14,7 +14,7 @@ export function BrandLogo({
   const height = variant === "english" ? 32 : 40;
 
   return (
-    <Link href="/" className={`brand-logo inline-flex shrink-0 ${className}`} aria-label="کوبار">
+    <Link href="/" className={`brand-logo max-w-28 inline-flex shrink-0 ${className}`} aria-label="کوبار">
       <Image
         src={src}
         alt="Koubar"

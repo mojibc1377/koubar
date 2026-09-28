@@ -37,6 +37,10 @@ export function serializeCafeItem(item: DbCafeItem): CafeMenuItem {
     longDescription: item.longDescription ?? undefined,
     image: item.image,
     price: item.price,
+    priceSecondary: item.priceSecondary ?? undefined,
+    dualCoffeePricing: item.dualCoffeePricing,
+    linePrimaryLabel: item.linePrimaryLabel ?? undefined,
+    lineSecondaryLabel: item.lineSecondaryLabel ?? undefined,
     badge: item.badge ?? undefined,
     notes: notesArray(item.notes),
   };

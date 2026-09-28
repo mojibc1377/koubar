@@ -59,7 +59,7 @@ export function LimitedOffers() {
 
         <div
           ref={scrollRef}
-          className="flex gap-6 overflow-x-auto pb-4 scrollbar-none"
+          className="flex items-stretch gap-6 overflow-x-auto overflow-y-hidden py-2 scrollbar-none"
           style={{ scrollbarWidth: "none" }}
         >
           {isLoading && (
@@ -68,9 +68,12 @@ export function LimitedOffers() {
           {products.map((product, index) => (
             <ProductCard
               key={product.id}
+              className="self-stretch"
               id={product.id}
               title={product.title}
+              image = {product.image}
               description={product.description}
+              longDescription={product.longDescription!}
               price={product.price}
               badge={product.badge ?? "ویژه"}
               variant={product.variant}

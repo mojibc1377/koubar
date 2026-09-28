@@ -30,3 +30,33 @@ export async function PATCH(
 
   return jsonOk({ id: order.orderNumber, status: order.status });
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const authResult = await requireAdmin();
+  if ("error" in authResult) return authResult.error;
+
+  const { id } = await params;
+
+  try {
+    const order = await prisma.order.delete({
+      where: { orderNumber: id },
+    });
+
+    return jsonOk({ id: order.orderNumber });
+  } catch (err: unknown) {
+    // Prisma throws P2025 when the record to delete doesn't exist
+    if (
+      typeof err === "object" &&
+      err !== null &&
+      "code" in err &&
+      (err as { code?: string }).code === "P2025"
+    ) {
+      return jsonError("سفارش یافت نشد", 404);
+    }
+
+    throw err;
+  }
+}

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AdminButton } from "@/components/admin/AdminButton";
 import { AdminInput, AdminTextarea } from "@/components/admin/AdminField";
+import { AdminImageField } from "@/components/admin/AdminImageField";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { useAdminAccessories, useAccessoryMutations } from "@/hooks/use-admin";
@@ -179,6 +180,12 @@ export default function AdminAccessoriesPage() {
               value={draft.description}
               onChange={(e) => setDraft({ ...draft, description: e.target.value })}
             />
+            <div className="sm:col-span-2">
+              <AdminImageField
+                value={draft.image}
+                onChange={(image) => setDraft({ ...draft, image })}
+              />
+            </div>
             <AdminButton onClick={saveItem}>ذخیره</AdminButton>
           </div>
         )}

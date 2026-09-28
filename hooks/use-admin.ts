@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api/client";
 import { queryKeys } from "@/lib/query-keys";
-import type { AdminBlog, AdminCafeItem, AdminOrder, AdminRoasteryProduct, AdminUser } from "@/lib/admin/types";
+import type { AdminBlog, AdminCafeItem, AdminOrder, AdminRoasteryProduct, AdminUser, AdminDiscountCode , AdminJobApplication } from "@/lib/admin/types";
 import type { BlogPost, StaffLeaderboardEntry } from "@/lib/types";
 import type { AccessoryItem } from "@/lib/types";
 
@@ -32,6 +32,72 @@ export function useAdminUsers() {
     queryKey: queryKeys.adminUsers,
     queryFn: () => apiFetch<AdminUser[]>("/api/admin/users"),
   });
+}
+export function useAdminJobApplications() {
+  return useQuery({
+    queryKey: queryKeys.adminJobApplications,
+    queryFn: () =>
+      apiFetch<AdminJobApplication[]>(
+        "/api/admin/job-applications",
+      ),
+  });
+}
+
+export function useJobApplicationMutations() {
+  const qc = useQueryClient();
+
+  const invalidate = () => {
+    qc.invalidateQueries({
+      queryKey: queryKeys.adminJobApplications,
+    });
+  };
+
+  const update = useMutation({
+    mutationFn: ({
+      id,
+      ...body
+    }: {
+      id: string;
+
+      status?: AdminJobApplication["status"];
+
+      fullName?: string;
+      phone?: string;
+      email?: string | null;
+      age?: number;
+      marriageStatus?: AdminJobApplication["marriageStatus"];
+      militaryStatus?: AdminJobApplication["militaryStatus"];
+      address?: string;
+
+      department?: AdminJobApplication["department"];
+      positionTitle?: string;
+      message?: string | null;
+    }) =>
+      apiFetch<AdminJobApplication>(
+        `/api/admin/job-applications/${id}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify(body),
+        },
+      ),
+    onSuccess: invalidate,
+  });
+
+  const remove = useMutation({
+    mutationFn: (id: string) =>
+      apiFetch(
+        `/api/admin/job-applications/${id}`,
+        {
+          method: "DELETE",
+        },
+      ),
+    onSuccess: invalidate,
+  });
+
+  return {
+    update,
+    remove,
+  };
 }
 
 export function useAdminOrders(type?: string) {
@@ -221,6 +287,19 @@ export function useOrderStatusMutation() {
   });
 }
 
+export function useOrderDeleteMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      apiFetch(`/api/admin/orders/${id}`, { method: "DELETE" }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin", "orders"] });
+      qc.invalidateQueries({ queryKey: queryKeys.adminStats });
+      qc.invalidateQueries({ queryKey: queryKeys.myOrders });
+    },
+  });
+}
+
 export function useUserAdminMutation() {
   const qc = useQueryClient();
   return useMutation({
@@ -251,4 +330,44 @@ export function useAdminStaffLeaderboard() {
   });
 }
 
-export type { AdminBlog };
+export function useAdminDiscountCodes() {
+  return useQuery({
+    queryKey: queryKeys.adminDiscountCodes,
+    queryFn: () => apiFetch<AdminDiscountCode[]>("/api/admin/discount-codes"),
+  });
+}
+
+export function useDiscountCodeMutations() {
+  const qc = useQueryClient();
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: queryKeys.adminDiscountCodes });
+  };
+
+  const create = useMutation({
+    mutationFn: (body: Record<string, unknown>) =>
+      apiFetch<AdminDiscountCode>("/api/admin/discount-codes", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    onSuccess: invalidate,
+  });
+
+  const update = useMutation({
+    mutationFn: ({ id, ...body }: { id: string } & Record<string, unknown>) =>
+      apiFetch<AdminDiscountCode>(`/api/admin/discount-codes/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(body),
+      }),
+    onSuccess: invalidate,
+  });
+
+  const remove = useMutation({
+    mutationFn: (id: string) =>
+      apiFetch(`/api/admin/discount-codes/${id}`, { method: "DELETE" }),
+    onSuccess: invalidate,
+  });
+
+  return { create, update, remove };
+}
+
+export type { AdminBlog, AdminDiscountCode };

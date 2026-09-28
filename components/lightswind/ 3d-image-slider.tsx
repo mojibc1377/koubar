@@ -7,20 +7,21 @@ npm i lightswind@latest*/
 
 import React from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { getImageUrl } from "@/lib/storage";
 
 const DEFAULT_DATA = [
-  "/Screenshot 2026-05-26 at 10.33 Background Removed.26.png",
-  "/Screenshot 2026-05-26 at 10.33 Background Removed.30.png",
-  "/Screenshot 2026-05-26 at 10.33 Background Removed.35.png",
-  "/Screenshot 2026-05-26 at 10.33 Background Removed.40.png",
-  "/Screenshot 2026-05-26 at 10.33 Background Removed.51.png",
-  "/Screenshot 2026-05-26 at 10.33 Background Removed.55.png",
-  "/Screenshot 2026-05-26 at 10.34 Background Removed.14.png",
-  "/Screenshot 2026-05-26 at 10.34 Background Removed.18.png",
-  "/Screenshot 2026-05-26 at 10.34 Background Removed.22.png",
-  "/Screenshot 2026-05-26 at 10.34 Background Removed.27.png",
-  "/Screenshot 2026-05-26 at 10.34 Background Removed.37.png",
-  "/Screenshot 2026-05-26 at 10.34 Background Removed.41.png",
+  "/images/Koubar-1.webp",
+
+  "/images/Koubar-48.webp",
+  "/images/Koubar-55.webp",
+      "/images/Koubar-25.webp",
+  "/images/Koubar-14.webp",
+  "/images/Koubar-1.webp",
+  "/images/Koubar-49.webp",
+  "/images/Koubar-56.webp",
+  "/images/Koubar-67.webp",
+  "/images/Koubar-25.webp",
+  "/images/Koubar-48.webp",
 ];
 
 interface Slider3DProps {
@@ -92,10 +93,12 @@ export default function ImageSlider3D({
           repeat: Infinity,
         }}
       >
+        
         {images.map((src, i) => (
-          <img
+
+<img
             key={i}
-            src={src}
+            src={getImageUrl(src)}
             alt={`Slide ${i}`}
             className={`col-start-1 bg-foreground row-start-1 object-cover rounded-[1.5em] ${imageClassName}`}
             style={{

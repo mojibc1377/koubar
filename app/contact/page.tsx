@@ -16,23 +16,22 @@ export default function ContactPage() {
 
   return (
     <PageShell>
-      <div className="mx-auto grid max-w-[1400px] gap-12 px-6 py-16 lg:grid-cols-2 lg:px-10 lg:py-24">
+      <div className="mx-auto grid max-w-350 gap-12 px-6 py-16 lg:grid-cols-2 lg:px-10 lg:py-24">
         <div>
           <h1 className="text-4xl font-extrabold">تماس با ما</h1>
-          <p className="mt-4 text-muted">
-            تهران، نیاوران، خیابان باهنر، خیابان شفیعی، نبش کوچه بهرام، پلاک ۹
+          <p className="mt-6 max-w-xs text-sm leading-8 text-muted">
+            رشت-گلسار- خیابان ۹۳-شاهد یکم-نبش خیابان ۹۱ شمالی
           </p>
-          <p className="mt-6 text-muted">
-            <a href="tel:+989123456003" className="hover:text-accent">
-              ۰۹۱۲۳۴۵۶۰۰۳
-            </a>
-            <br />
-            <a href="tel:+989126873268" className="hover:text-accent">
-              ۰۹۱۲۶۸۷۳۲۶۸
+          <p className="mt-4 text-sm text-muted">
+            تلفن تماس | {" "}
+            <a href="tel:+989003612123" className="hover:text-accent">
+              ۰۹۰۰۳۶۱۲۱۲۳
             </a>
           </p>
-          <p className="mt-8 text-sm text-muted">
-            شنبه تا پنج‌شنبه ۹ تا ۲۱ — جمعه‌ها ۱۰ تا ۱۸
+          <p className="mt-2 text-sm text-muted">
+            <span className="hover:text-accent" dir="auto">
+               ۰۸:۰۰ صبح  الی ۱۱:۰۰ شب
+            </span>
           </p>
         </div>
         <div className="border border-border bg-card p-8">

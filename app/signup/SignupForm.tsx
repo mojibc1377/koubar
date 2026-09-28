@@ -7,6 +7,7 @@ import { FloatingOrbs } from "@/components/motion/FloatingOrbs";
 import { PhoneOtpForm } from "@/components/auth/PhoneOtpForm";
 import { logos } from "@/lib/icons";
 import { ease, spring } from "@/lib/motion";
+import { getImageUrl } from "@/lib/storage";
 
 export function SignupForm() {
   const reduce = useReducedMotion();
@@ -41,7 +42,7 @@ export function SignupForm() {
           transition={{ delay: 0.4, ...spring }}
         >
           <Image
-            src="/images/seasonal.png"
+  src={getImageUrl('/images/Koubar-66.webp') }
             alt=""
             width={480}
             height={280}

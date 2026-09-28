@@ -1,11 +1,35 @@
 import type { CafeCategory } from "./types";
+import {
+  COFFEE_LINE_PRIMARY_LABEL,
+  COFFEE_LINE_SECONDARY_LABEL,
+} from "./cafe-coffee-lines";
+
+type CafeMenuItemDef = CafeCategory["items"][number] & {
+  priceSecondary?: number;
+  dualCoffeePricing?: boolean;
+  linePrimaryLabel?: string;
+  lineSecondaryLabel?: string;
+};
+
+function coffeeItem(
+  item: Omit<CafeMenuItemDef, "dualCoffeePricing" | "linePrimaryLabel" | "lineSecondaryLabel"> & {
+    priceSecondary: number;
+  },
+): CafeMenuItemDef {
+  return {
+    ...item,
+    dualCoffeePricing: true,
+    linePrimaryLabel: COFFEE_LINE_PRIMARY_LABEL,
+    lineSecondaryLabel: COFFEE_LINE_SECONDARY_LABEL,
+  };
+}
 
 export const cafeMenu: CafeCategory[] = [
   {
     id: "espresso",
     name: "اسپرسو",
     items: [
-      {
+      coffeeItem({
         id: "espresso-single",
         name: "اسپرسو سینگل",
         description: "شات ۳۰ میلی‌لیتر از بلند روز",
@@ -14,8 +38,9 @@ export const cafeMenu: CafeCategory[] = [
         image: "/images/hero.png",
         notes: ["شکلات تلخ", "کارامل", "پایان تمیز"],
         price: 120_000,
-      },
-      {
+        priceSecondary: 145_000,
+      }),
+      coffeeItem({
         id: "espresso-double",
         name: "اسپرسو دوبل",
         description: "دو شات متعادل با کرمای غلیظ",
@@ -24,9 +49,10 @@ export const cafeMenu: CafeCategory[] = [
         image: "/images/seasonal.png",
         notes: ["بادی متوسط", "کرمای غلیظ", "اسیدیته متعادل"],
         price: 150_000,
+        priceSecondary: 175_000,
         badge: "پرفروش",
-      },
-      {
+      }),
+      coffeeItem({
         id: "americano",
         name: "آمریکانو",
         description: "اسپرسو + آب داغ",
@@ -35,8 +61,9 @@ export const cafeMenu: CafeCategory[] = [
         image: "/images/gifting-art.png",
         notes: ["شفاف", "تلخی ملایم", "پایان نرم"],
         price: 145_000,
-      },
-      {
+        priceSecondary: 170_000,
+      }),
+      coffeeItem({
         id: "macchiato",
         name: "ماکیاتو",
         description: "اسپرسو با لکه فوم شیر",
@@ -45,14 +72,15 @@ export const cafeMenu: CafeCategory[] = [
         image: "/images/gifts.png",
         notes: ["مخملی", "کاراملی", "فوم سبک"],
         price: 155_000,
-      },
+        priceSecondary: 180_000,
+      }),
     ],
   },
   {
     id: "milk",
     name: "نوشیدنی‌های شیردار",
     items: [
-      {
+      coffeeItem({
         id: "cortado",
         name: "کورتادو",
         description: "اسپرسو با شیر بخار داده شده — نسبت ۱:۱",
@@ -61,8 +89,9 @@ export const cafeMenu: CafeCategory[] = [
         image: "/images/gifts.png",
         notes: ["متعادل", "شیرین", "بافت نرم"],
         price: 175_000,
-      },
-      {
+        priceSecondary: 200_000,
+      }),
+      coffeeItem({
         id: "latte",
         name: "لاته",
         description: "اسپرسو با شیر نرم و فوم کم",
@@ -71,9 +100,10 @@ export const cafeMenu: CafeCategory[] = [
         image: "/images/gifting-art.png",
         notes: ["ابریشمی", "شیرین ملایم", "آروماتیک"],
         price: 195_000,
+        priceSecondary: 220_000,
         badge: "پرفروش",
-      },
-      {
+      }),
+      coffeeItem({
         id: "cappuccino",
         name: "کاپوچینو",
         description: "فوم غلیظ و بادی متعادل",
@@ -82,8 +112,9 @@ export const cafeMenu: CafeCategory[] = [
         image: "/images/seasonal.png",
         notes: ["فوم زیاد", "کاکائویی", "پایان خشک‌تر"],
         price: 190_000,
-      },
-      {
+        priceSecondary: 215_000,
+      }),
+      coffeeItem({
         id: "flat-white",
         name: "فلت وایت",
         description: "دوبل اسپرسو با میکروفوم ابریشمی",
@@ -92,14 +123,15 @@ export const cafeMenu: CafeCategory[] = [
         image: "/images/hero.png",
         notes: ["غلیظ", "شیر کمتر", "بادی بالا"],
         price: 205_000,
-      },
+        priceSecondary: 230_000,
+      }),
     ],
   },
   {
     id: "brew",
     name: "دم‌آوری",
     items: [
-      {
+      coffeeItem({
         id: "v60",
         name: "V60",
         description: "تک‌خاستگاه روز — پروفایل روشن",
@@ -108,8 +140,9 @@ export const cafeMenu: CafeCategory[] = [
         image: "/images/seasonal.png",
         notes: ["شفاف", "گلی", "اسیدیته روشن"],
         price: 220_000,
-      },
-      {
+        priceSecondary: 250_000,
+      }),
+      coffeeItem({
         id: "chemex",
         name: "کمکس",
         description: "فنجان تمیز با بادی سبک",
@@ -118,8 +151,9 @@ export const cafeMenu: CafeCategory[] = [
         image: "/images/gifts.png",
         notes: ["سبک", "تمیز", "نت میوه‌ای"],
         price: 240_000,
-      },
-      {
+        priceSecondary: 270_000,
+      }),
+      coffeeItem({
         id: "cold-brew",
         name: "کلد برو",
         description: "دم‌آوری سرد ۱۶ ساعته",
@@ -128,8 +162,9 @@ export const cafeMenu: CafeCategory[] = [
         image: "/images/gifting-art.png",
         notes: ["خنک", "تلخی پایین", "شیرینی طبیعی"],
         price: 200_000,
+        priceSecondary: 225_000,
         badge: "فصلی",
-      },
+      }),
     ],
   },
   {

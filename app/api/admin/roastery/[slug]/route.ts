@@ -34,6 +34,7 @@ export async function PATCH(
         : {}),
       ...(typeof body.inStock === "boolean" ? { inStock: body.inStock } : {}),
       ...(typeof body.active === "boolean" ? { active: body.active } : {}),
+      ...(typeof body.image === "string" ? { image: body.image.trim() || "/images/hero.png" } : {}),
     },
   });
 

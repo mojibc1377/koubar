@@ -1,9 +1,7 @@
+import { AccessoriesSection } from "@/components/AccessoriesSection";
 import { Features } from "@/components/Features";
-import { GiftGrid } from "@/components/GiftGrid";
-import { GiftingArt } from "@/components/GiftingArt";
 import { Hero } from "@/components/Hero";
 import ImageSlider3D from "@/components/lightswind/ 3d-image-slider";
-import SmokeyBackground from "@/components/lightswind/smokey-background";
 import { LimitedOffers } from "@/components/LimitedOffers";
 import { PageShell } from "@/components/PageShell";
 import { SeasonalBestsellers } from "@/components/SeasonalBestsellers";
@@ -20,8 +18,7 @@ export default function Home() {
 
       <LimitedOffers />
       <SeasonalBestsellers />
-      <GiftGrid />
-      <GiftingArt />
+      <AccessoriesSection />
       <Testimonials />
     </PageShell>
   );

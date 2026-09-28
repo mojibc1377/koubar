@@ -47,33 +47,6 @@ export const limitedProducts = [
   },
 ] as const;
 
-export const giftItems = [
-  {
-    title: "ست قهوه و هدیه برای دو نفر",
-    description:
-      "ست هدیه‌ای کامل برای دو نفر با قهوه و اقلام جانبی؛ مناسب برای هدیه دادن در فصل تعطیلات.",
-    image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=800&q=80",
-  },
-  {
-    title: "قهوه تک‌خاستگاه زمستانی",
-    description:
-      "تک‌خاستگاه زمستانی محدود با پروفایل طعمی درخشان؛ گزینه‌ای ویژه برای دوست‌داران قهوه تخصصی.",
-    image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80",
-  },
-  {
-    title: "ست بلند زمستانی و ماگ هدیه",
-    description:
-      "بلند زمستانی به همراه ماگ مخصوص تعطیلات؛ ترکیبی آماده برای یک تجربه کامل قهوه زمستانی.",
-    image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=800&q=80",
-  },
-  {
-    title: "ماگ سرامیکی کینتو",
-    description:
-      "ماگ سرامیکی کینتو با طراحی مینیمال و رنگ فصل؛ همراهی شیک برای هر فنجان قهوه.",
-    image: "https://images.unsplash.com/photo-1511920170033-f8396924c348?w=800&q=80",
-  },
-] as const;
-
 export const testimonials = [
   {
     quote:

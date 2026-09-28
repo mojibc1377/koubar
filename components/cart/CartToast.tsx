@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 import { spring } from "@/lib/motion";
 import { Z } from "@/lib/z-index";
+import { getImageUrl } from "@/lib/storage";
 
 export function CartToast() {
   const { toast, clearToast, count, openCart } = useCart();
@@ -35,9 +36,10 @@ export function CartToast() {
               transition={spring}
             >
               <Image
-                src={toast.image ?? "/images/hero.png"}
+                src={toast.image ? getImageUrl(toast.image) : "/koubar logo type face-01.png"}
                 alt=""
                 fill
+                unoptimized
                 className="object-cover"
                 sizes="56px"
               />

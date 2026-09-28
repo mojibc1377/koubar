@@ -34,7 +34,7 @@ export function Header() {
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
             <BrandLogo
               variant="farsi"
-              className="mt-1 inline-flex max-w-[72px] shrink-0 sm:max-w-none"
+              className="mt-1 inline-flex max-w-16 md:max-w-24 pt-2 lg:max-w-28 shrink-0 sm:max-w-16"
             />
           </motion.div>
         </div>

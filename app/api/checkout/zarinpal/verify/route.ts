@@ -53,21 +53,43 @@ export async function GET(req: NextRequest) {
     if (code === 100 || code === 101) {
       const refId = String(verifyData.data.ref_id ?? "");
 
-      await prisma.order.update({
-        where: { id: orderId },
-        data: { status: "PAID", paymentRefId: refId },
-      });
+      await prisma.$transaction(async (tx) => {
+        await tx.order.update({
+          where: { id: orderId },
+          data: { status: "PAID", paymentRefId: refId },
+        });
 
-      // Create the Transaction record so it shows up in the user's history
-      await prisma.transaction.create({
-        data: {
-          txNumber: `TX-ZP-${refId || Date.now()}`,
-          orderId,
-          userId: order.userId,
-          amount: order.total,
-          method: "زرین‌پال",
-          status: "PAID",
-        },
+        if (order.discountCodeId) {
+          const existing = await tx.discountRedemption.findUnique({
+            where: {
+              discountCodeId_userId: {
+                discountCodeId: order.discountCodeId,
+                userId: order.userId,
+              },
+            },
+          });
+
+          if (!existing) {
+            await tx.discountRedemption.create({
+              data: {
+                discountCodeId: order.discountCodeId,
+                userId: order.userId,
+                orderId: order.id,
+              },
+            });
+          }
+        }
+
+        await tx.transaction.create({
+          data: {
+            txNumber: `TX-ZP-${refId || Date.now()}`,
+            orderId,
+            userId: order.userId,
+            amount: order.total,
+            method: "زرین‌پال",
+            status: "PAID",
+          },
+        });
       });
 
       return NextResponse.redirect(

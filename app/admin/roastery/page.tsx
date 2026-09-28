@@ -6,6 +6,7 @@ import { AdminButton } from "@/components/admin/AdminButton";
 import { AdminInput, AdminSelect, AdminTextarea } from "@/components/admin/AdminField";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { AdminImageField } from "@/components/admin/AdminImageField";
 import { useAdminRoastery, useRoasteryMutations } from "@/hooks/use-admin";
 import type { AdminRoasteryProduct } from "@/lib/admin/types";
 import { formatPrice } from "@/lib/format";
@@ -14,6 +15,7 @@ const emptyProduct = (): AdminRoasteryProduct => ({
   id: `prod-${Date.now()}`,
   title: "",
   description: "",
+  image: "/images/hero.png",
   price: 0,
   variant: "african",
   inStock: true,
@@ -45,6 +47,7 @@ export default function AdminRoasteryPage() {
           slug: draft.id,
           title: draft.title,
           description: draft.description,
+          image: draft.image ?? "/images/hero.png",
           price: draft.price,
           badge: draft.badge,
           variant: draft.variant,
@@ -56,6 +59,7 @@ export default function AdminRoasteryPage() {
           slug: draft.id,
           title: draft.title,
           description: draft.description,
+          image: draft.image ?? "/images/hero.png",
           price: draft.price,
           badge: draft.badge,
           variant: draft.variant,
@@ -223,6 +227,12 @@ export default function AdminRoasteryPage() {
                 label="توضیحات"
                 value={draft.description}
                 onChange={(e) => setDraft({ ...draft, description: e.target.value })}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <AdminImageField
+                value={draft.image ?? "/images/hero.png"}
+                onChange={(image) => setDraft({ ...draft, image })}
               />
             </div>
             <div className="flex gap-2 sm:col-span-2">

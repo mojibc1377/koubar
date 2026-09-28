@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import type { BlogPost } from "@/lib/types";
-import { spring } from "@/lib/motion";
+import { getImageUrl } from "@/lib/storage";
 
 export function BlogCard({ post, index = 0 }: { post: BlogPost; index?: number }) {
   const reduce = useReducedMotion();
@@ -21,9 +21,10 @@ export function BlogCard({ post, index = 0 }: { post: BlogPost; index?: number }
       <Link href={`/blog/${post.slug}`} className="block">
         <div className="relative h-48 overflow-hidden">
           <Image
-            src={post.image}
+            src={getImageUrl(post.image)}
             alt=""
             fill
+            unoptimized
             className="object-cover transition duration-700 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, 50vw"
           />

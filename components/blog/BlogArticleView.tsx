@@ -7,6 +7,7 @@ import { BlogCard } from "@/components/blog/BlogCard";
 import { BlogContent } from "@/components/blog/BlogContent";
 import type { BlogPost } from "@/lib/types";
 import { ease } from "@/lib/motion";
+import { getImageUrl } from "@/lib/storage";
 
 export function BlogArticleView({
   post,
@@ -25,10 +26,11 @@ export function BlogArticleView({
     <article>
       <div className="relative -mx-6 mb-10 h-[min(52vh,420px)] overflow-hidden lg:-mx-10 lg:rounded-3xl">
         <Image
-          src={post.image}
+          src={getImageUrl(post.image)}
           alt=""
           fill
           priority
+          unoptimized
           className="object-cover"
           sizes="100vw"
         />

@@ -8,6 +8,7 @@ import { FloatingOrbs } from "@/components/motion/FloatingOrbs";
 import { PhoneOtpForm } from "@/components/auth/PhoneOtpForm";
 import { logos } from "@/lib/icons";
 import { ease, spring } from "@/lib/motion";
+import { getImageUrl } from "@/lib/storage";
 
 export function LoginForm() {
   const searchParams = useSearchParams();
@@ -24,9 +25,9 @@ export function LoginForm() {
       >
         <FloatingOrbs />
         <div className="relative z-10">
-          <BrandLogo variant="english" className="brightness-0 invert" />
+          <BrandLogo variant="english" className="brightness-0 mt-0 invert" />
           <motion.h2
-            className="mt-10 text-3xl font-extrabold leading-12"
+            className=" text-3xl font-extrabold leading-12"
             initial={reduce ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, ease }}
@@ -44,7 +45,7 @@ export function LoginForm() {
           transition={{ delay: 0.4, ...spring }}
         >
           <Image
-            src="/images/hero.png"
+  src={getImageUrl('/images/Koubar-40.webp') }
             alt=""
             width={480}
             height={280}

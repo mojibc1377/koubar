@@ -6,11 +6,10 @@ import { useEffect, useRef, useState } from "react";
 import { FloatingOrbs } from "@/components/motion/FloatingOrbs";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { ease, spring } from "@/lib/motion";
-import ImageSlider3D from "./lightswind/ 3d-image-slider";
 
 const slides = [
   {
-    title: ["قهوه تخصصی", "تازه‌رُست", "تی‌دی‌اس"],
+    title: ["قهوه تخصصی", "تازه‌رُست", "کوبار"],
     description:
       "دانه‌های منتخب و رُست کنترل‌شده با پروفایل‌های طعمی شفاف؛ مناسب برای اسپرسو و روش‌های دمی. انتخاب کنید و طعم دلخواهتان را دقیق‌تر تجربه کنید.",
     overlay: "The Art of Hands",
@@ -29,7 +28,7 @@ const slides = [
   },
 ] as const;
 
-const HERO_VIDEO = "/videos/hero-roasting.mp4";
+const HERO_VIDEO = "/videos/Koubar 01.mp4";
 
 function HeroContent({ slideKey, slide }: { slideKey: number; slide: (typeof slides)[number] }) {
   const reduce = useReducedMotion();
@@ -47,14 +46,42 @@ function HeroContent({ slideKey, slide }: { slideKey: number; slide: (typeof sli
           lines={[...slide.title]}
           className="space-y-1 text-4xl font-extrabold leading-tight tracking-tight text-background sm:text-5xl lg:text-[3.25rem]"
         />
-        <motion.p
-          className="mt-6 max-w-lg text-base leading-8 text-foreground/75 lg:mt-8"
-          initial={reduce ? false : { opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35, duration: 0.6, ease }}
-        >
-          {slide.description}
-        </motion.p>
+    <motion.p
+  className="
+    mt-6 max-w-lg
+
+    rounded-2xl
+    border border-white/15
+    bg-white/4
+    px-5 py-4
+
+    text-base leading-8
+    text-background
+
+    shadow-[0_8px_32px_rgba(0,0,0,0.18)]
+    backdrop-blur-2xl
+    backdrop-saturate-150
+
+    md:rounded-none
+    md:border-transparent
+    md:bg-transparent
+    md:px-0
+    md:py-0
+    md:shadow-none
+    md:backdrop-blur-none
+    md:text-foreground/80
+    md:backdrop-saturate-100
+
+    lg:mt-8
+        lg:text-foreground/80
+
+  "
+  initial={reduce ? false : { opacity: 0, y: 20 }}
+  animate={{ opacity: 0.6, y: 0 }}
+  transition={{ delay: 0.35, duration: 0.6, ease }}
+>
+  {slide.description}
+</motion.p>
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -118,7 +145,7 @@ export function Hero() {
             loop
             playsInline
             preload="auto"
-            poster="/images/hero.png"
+            poster="/images/Koubar-62.JPG"
             aria-hidden
           >
             <source src={HERO_VIDEO} type="video/mp4" />

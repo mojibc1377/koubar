@@ -110,6 +110,10 @@ export type CafeMenuItem = {
   image?: string;
   notes?: string[];
   price: number;
+  priceSecondary?: number;
+  dualCoffeePricing?: boolean;
+  linePrimaryLabel?: string;
+  lineSecondaryLabel?: string;
   badge?: string;
 };
 

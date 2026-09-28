@@ -1,403 +1,698 @@
-import {
-  PrismaClient,
-  BlogStatus,
-  RoasteryVariant,
-  UserRole,
-} from "@prisma/client";
-import { cafeMenu } from "../lib/cafe-menu";
-import { accessories } from "../lib/accessories";
-import { blogPosts } from "../lib/blog";
-import { giftItems, limitedProducts } from "../lib/data";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-function slugify(text: string) {
-  return text
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^\w\u0600-\u06FF-]/g, "")
-    .slice(0, 64);
-}
-
 async function main() {
-  console.log("🌱 Seeding Koubar database...");
+  console.log("شروع seed کردن منوی کافه...");
 
-  // await prisma.transaction.deleteMany();
-  // await prisma.orderItem.deleteMany();
-  // await prisma.order.deleteMany();
-  // await prisma.blogPost.deleteMany();
-  // await prisma.giftItem.deleteMany();
-  // await prisma.accessory.deleteMany();
-  // await prisma.roasteryProduct.deleteMany();
-  // await prisma.cafeMenuItem.deleteMany();
-  // await prisma.cafeCategory.deleteMany();
-  // await prisma.phoneOtp.deleteMany();
-  // await prisma.user.deleteMany();
+  const categories = [
+    { id: "espresso", name: "اسپرسو", sortOrder: 0 },
+    { id: "matcha", name: "ماچا بار", sortOrder: 1 },
+    { id: "brew", name: "دم‌آوری", sortOrder: 2 },
+    { id: "cold-gas", name: "نوشیدنی سرد گازدار", sortOrder: 3 },
+    { id: "hotDrinks", name: "نوشیدبنی گرم", sortOrder: 4 },
+    { id: "shake", name: "شیک", sortOrder: 5 },
+    { id: "smoothie", name: "اسموتی", sortOrder: 6 },
+    { id: "special", name: "اسپشیالیتی", sortOrder: 7 },
+    { id: "desserts", name: "دسر ها", sortOrder: 8 },
+  ];
 
-  const adminPhone = process.env.ADMIN_PHONE ?? "09120000000";
-  const admin = await prisma.user.create({
-    data: {
-      phone: adminPhone,
-      name: "مدیر کوبار",
-      address: "تهران",
-      role: UserRole.ADMIN,
-    },
-  });
-
-  const demoUsers = await Promise.all(
-    [
-      { phone: "09121234567", name: "سارا محمدی", address: "تهران، نیاوران" },
-      { phone: "09129876543", name: "علی رضایی", address: "تهران، زعفرانیه" },
-      { phone: "09131112233", name: "مریم کاظمی", address: "اصفهان" },
-    ].map((u) =>
-      prisma.user.create({
-        data: { ...u, role: UserRole.USER },
-      }),
-    ),
-  );
-
-  for (const [ci, cat] of cafeMenu.entries()) {
-    await prisma.cafeCategory.create({
-      data: {
-        id: cat.id,
-        name: cat.name,
-        sortOrder: ci,
-        items: {
-          create: cat.items.map((item, ii) => ({
-            slug: item.id,
-            name: item.name,
-            description: item.description,
-            longDescription: item.longDescription,
-            image: item.image ?? "/images/hero.png",
-            price: item.price,
-            badge: item.badge,
-            notes: item.notes ?? [],
-            sortOrder: ii,
-            active: true,
-          })),
-        },
-      },
+  for (const category of categories) {
+    await prisma.cafeCategory.upsert({
+      where: { id: category.id },
+      update: { name: category.name, sortOrder: category.sortOrder },
+      create: category,
     });
   }
 
-  const extraRoastery = [
-    ...limitedProducts,
+  console.log(`✅ ${categories.length} دسته‌بندی ایجاد/به‌روزرسانی شد.`);
+
+  const cafeItems = [
     {
-      id: "decaf-colombia",
-      title: "دانه دی کف کلمبیا ۱ کیلوگرمی",
-      description: "کافئین کم با طعم شکلاتی و بادام.",
-      price: 5_800_000,
-      badge: "جدید",
-      variant: "street" as const,
+      slug: "smoothie-hawai",
+      categoryId: "smoothie",
+      name: "اسموتی هاوایی",
+      description: "انبه +‌ موز +‌ آناناس +‌ سیروپ دست ساز",
+      longDescription: "انبه +‌ موز +‌ آناناس +‌ سیروپ دست ساز",
+      image: "/menu-items/Koubar-115.JPG",
+      price: 400000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["شفاف", "گلی", "اسیدیته روشن"],
+      active: true,
+      sortOrder: 2,
+    },
+    {
+      slug: "matcha-peste",
+      categoryId: "matcha",
+      name: "ماچا پسته",
+      description: "ترکیب چای ماچا با کره پسته",
+      longDescription: "پودر ماچا با کیفیت ، کره پسته",
+      image: "/images/gifting-art.png",
+      price: 460000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["شفاف", "گلی", "اسیدیته روشن"],
+      active: true,
+      sortOrder: 3,
+    },
+    {
+      slug: "smoothie-lemon",
+      categoryId: "smoothie",
+      name: "اسموتی لمون",
+      description: "لیموی تازه + سیروپ دست ساز",
+      longDescription: "لیموی تازه + سیروپ دست ساز",
+      image: "/menu-items/Koubar-116.JPG",
+      price: 360000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["شفاف", "گلی", "اسیدیته روشن"],
+      active: true,
+      sortOrder: 0,
+    },
+    {
+      slug: "smoothie-pinky",
+      categoryId: "smoothie",
+      name: "اسموتی پینکی",
+      description: "توت فرنگی تازه + سیروپ دست ساز",
+      longDescription: "توت فرنگی تازه + سیروپ دست ساز",
+      image: "/menu-items/Koubar-114.JPG",
+      price: 360000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["شفاف", "گلی", "اسیدیته روشن"],
+      active: true,
+      sortOrder: 1,
+    },
+    {
+      slug: "matcha-mango",
+      categoryId: "matcha",
+      name: "ماچا انبه",
+      description: "ترکیب چای ماچا با پودر انبه",
+      longDescription: "پودر ماچا با کیفیت ، پودر انبه",
+      image: "/images/gifting-art.png",
+      price: 390000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["شفاف", "گلی", "اسیدیته روشن"],
+      active: true,
+      sortOrder: 2,
+    },
+    {
+      slug: "special",
+      categoryId: "special",
+      name: " اسپرسو تخصصی",
+      description: "دو شات متعادل با کرمای غلیظ",
+      longDescription: "گزینه محبوب کافه. دوبل استاندارد با بادی بیشتر و تعادل شیرینی/تلخی برای شروع روز.",
+      image: "/images/Koubar-67.webp",
+      price: 370000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: "تخصصی",
+      notes: ["بادی متوسط", "کرمای غلیظ", "اسیدیته متعادل"],
+      active: true,
+      sortOrder: 1,
+    },
+    {
+      slug: "espresso-shake",
+      categoryId: "shake",
+      name: "شیک اسپرسو",
+      description: "بستنی وانیل +‌ اسپرسو",
+      longDescription: "بستنی وانیل +‌ اسپرسو",
+      image: "/menu-items/Koubar-118.JPG",
+      price: 380000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["بادی متوسط", "کرمای غلیظ", "اسیدیته متعادل"],
+      active: true,
+      sortOrder: 0,
+    },
+    {
+      slug: "nutella-shake",
+      categoryId: "shake",
+      name: "شیک نوتلا",
+      description: "بستنی وانیل +‌ نوتلا",
+      longDescription: "بستنی وانیل +‌ نوتلا",
+      image: "/menu-items/Koubar-117.JPG",
+      price: 460000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["بادی متوسط", "کرمای غلیظ", "اسیدیته متعادل"],
+      active: true,
+      sortOrder: 1,
+    },
+    {
+      slug: "peanut-shake",
+      categoryId: "shake",
+      name: "شیک کره بادام‌زمینی",
+      description: "بستنی وانیل +‌ کره بادام‌زمینی",
+      longDescription: "شیک غلیظ و کرمی با طعم بادام‌زمینی",
+      image: "/menu-items/Koubar-121.JPG",
+      price: 460000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["بادی متوسط", "کرمای غلیظ", "اسیدیته متعادل"],
+      active: true,
+      sortOrder: 2,
+    },
+    {
+      slug: "cheesecake-sansebastian-pesteh",
+      categoryId: "desserts",
+      name: "چیز کیک سن سباستین پسته",
+      description: "چیز کیک باسک با طعم پسته",
+      longDescription: "همان چیز کیک سوخته باسکی، این‌بار با کرم پسته و روکشی آجیلی",
+      image: "/images/gifting-art.png",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["پسته ای", "کرمی", "کاراملی"],
+      active: false,
+      sortOrder: 7,
+    },
+    {
+      slug: "cinnamon-roll",
+      categoryId: "desserts",
+      name: "رول دارچین",
+      description: "خمیر چند لایه فرانسوی به همراه شکلات و دارچین",
+      longDescription: "خمیر لایه‌لایه فرانسوی پیچیده‌شده با شکلات و دارچین، پخته‌شده تا طلایی و ترد",
+      image: "/images/gifting-art.png",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["دارچینی", "لایه لایه", "شکلاتی"],
+      active: false,
+      sortOrder: 8,
+    },
+    {
+      slug: "espresso",
+      categoryId: "espresso",
+      name: "اسپرسو",
+      description: "دو شات متعادل با کرمای غلیظ",
+      longDescription: "گزینه محبوب کافه. استاندارد با بادی بیشتر و تعادل شیرینی/تلخی برای شروع روز.",
+      image: "/menu-items/Koubar-106.JPG",
+      price: 190000,
+      priceSecondary: 260000,
+      dualCoffeePricing: true,
+      linePrimaryLabel: "لاین دیلمان",
+      lineSecondaryLabel: "عربیکا ۱۰۰",
+      badge: "پرفروش",
+      notes: ["بادی متوسط", "کرمای غلیظ", "اسیدیته متعادل"],
+      active: true,
+      sortOrder: 1,
+    },
+    {
+      slug: "americano",
+      categoryId: "espresso",
+      name: "آمریکانو",
+      description: "قهوه‌ای سبک و شفاف با طعم اصیل اسپرسو",
+      longDescription: "ترکیبی از اسپرسوی غلیظ و آب داغ که طعم‌های زیرلایه‌ای قهوه را برجسته می‌کند؛ ",
+      image: "/menu-items/Koubar-107.JPG",
+      price: 190000,
+      priceSecondary: 260000,
+      dualCoffeePricing: true,
+      linePrimaryLabel: "لاین دیلمان",
+      lineSecondaryLabel: "عربیکا ۱۰۰",
+      badge: null,
+      notes: ["شفاف", "تلخی ملایم", "پایان نرم"],
+      active: true,
+      sortOrder: 2,
+    },
+    {
+      slug: "latte",
+      categoryId: "espresso",
+      name: "لاته",
+      description: "اسپرسو با شیر نرم و فوم کم",
+      longDescription: "لاته کلاسیک با میکروفوم ابریشمی. مناسب طعم‌های نرم و قابل شخصی‌سازی با شربت.",
+      image: "/menu-items/Koubar-108.JPG",
+      price: 260000,
+      priceSecondary: 300000,
+      dualCoffeePricing: true,
+      linePrimaryLabel: "لاین دیلمان",
+      lineSecondaryLabel: "عربیکا ۱۰۰",
+      badge: "پرفروش",
+      notes: ["ابریشمی", "شیرین ملایم", "آروماتیک"],
+      active: true,
+      sortOrder: 1,
+    },
+    {
+      slug: "cappuccino",
+      categoryId: "espresso",
+      name: "کاپوچینو",
+      description: "فوم غلیظ و بادی متعادل",
+      longDescription: "فوم بیشتر نسبت به لاته و طعم قهوه برجسته‌تر؛ کلاسیک همیشگی برای طرفداران قهوه شیردار.",
+      image: "/menu-items/Koubar-109.JPG",
+      price: 260000,
+      priceSecondary: 300000,
+      dualCoffeePricing: true,
+      linePrimaryLabel: "لاین دیلمان",
+      lineSecondaryLabel: "عربیکا ۱۰۰",
+      badge: null,
+      notes: ["فوم زیاد", "کاکائویی", "پایان خشک‌تر"],
+      active: true,
+      sortOrder: 2,
+    },
+    {
+      slug: "v60",
+      categoryId: "brew",
+      name: "V60",
+      description: "تک‌خاستگاه روز — پروفایل روشن",
+      longDescription: "دم‌آوری دستی با تمرکز بر شفافیت طعمی. هر روز با دانه منتخب و رُست مناسب سرو می‌شود.",
+      image: "/images/Koubar-64.webp",
+      price: 220000,
+      priceSecondary: 250000,
+      dualCoffeePricing: true,
+      linePrimaryLabel: "لاین دیلمان",
+      lineSecondaryLabel: "عربیکا ۱۰۰",
+      badge: null,
+      notes: ["شفاف", "گلی", "اسیدیته روشن"],
+      active: true,
+      sortOrder: 0,
+    },
+    {
+      slug: "chemex",
+      categoryId: "brew",
+      name: "کمکس",
+      description: "فنجان تمیز با بادی سبک",
+      longDescription: "فیلتر ضخیم‌تر کمکس روغن‌های بیشتر را حذف می‌کند و فنجانی سبک و تمیز می‌دهد.",
+      image: "/images/Koubar-64.webp",
+      price: 240000,
+      priceSecondary: 270000,
+      dualCoffeePricing: true,
+      linePrimaryLabel: "لاین دیلمان",
+      lineSecondaryLabel: "لاین استریت",
+      badge: null,
+      notes: ["سبک", "تمیز", "نت میوه‌ای"],
+      active: true,
+      sortOrder: 1,
+    },
+    {
+      slug: "cold-brew",
+      categoryId: "brew",
+      name: "کلد برو",
+      description: "دم‌آوری سرد ۱۶ ساعته",
+      longDescription: "استخراج سرد طولانی برای بافت نرم و تلخی پایین. سرو روی یخ یا به‌صورت خالص.",
+      image: "/menu-items/Koubar-120.JPG",
+      price: 200000,
+      priceSecondary: 225000,
+      dualCoffeePricing: true,
+      linePrimaryLabel: "لاین دیلمان",
+      lineSecondaryLabel: "لاین استریت",
+      badge: "فصلی",
+      notes: ["خنک", "تلخی پایین", "شیرینی طبیعی"],
+      active: true,
+      sortOrder: 2,
+    },
+    {
+      slug: "cortado",
+      categoryId: "espresso",
+      name: "کورتادو",
+      description: "تعادل بی‌نقص بین اسپرسو و شیر گرم",
+      longDescription: "یک فنجان کوچک و قدرتمند شامل اسپرسوی دوبل و مقدار کمی شیر بخارگرفته؛ اینجا شیر فقط برای تعدیل تلخی قهوه است  ",
+      image: "/menu-items/Koubar-110.JPG",
+      price: 190000,
+      priceSecondary: 260000,
+      dualCoffeePricing: true,
+      linePrimaryLabel: "لاین دیلمان",
+      lineSecondaryLabel: "عربیکا ۱۰۰",
+      badge: "پرفروش",
+      notes: ["بادی متوسط", "کرمای غلیظ", "اسیدیته متعادل"],
+      active: true,
+      sortOrder: 20,
+    },
+    {
+      slug: "crumble-albalu",
+      categoryId: "desserts",
+      name: "کرامبل آلبالو",
+      description: "کیک اسفنجی فرانسوی به همراه بادام درختی و آلبالو",
+      longDescription: "کیک اسفنجی فرانسوی سبک با روکش کرامبل بادام درختی و آلبالوهای ترش‌وشیرین",
+      image: "/images/gifting-art.png",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["ترش وشیرین", "بادامی", "اسفنجی"],
+      active: false,
+      sortOrder: 10,
+    },
+    {
+      slug: "gateau-basque",
+      categoryId: "desserts",
+      name: "گتو بسک",
+      description: "دسر کلاسیک فرانسوی با خمیر کره‌ای بادومی به همراه مارمالاد شاه‌توت",
+      longDescription: "خمیر کره‌ای بادومی ترد در بیرون و نرم در درون، پر شده با مارمالاد شاه‌توت خانگی",
+      image: "/images/gifting-art.png",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["کره ای", "بادومی", "میوه ای"],
+      active: false,
+      sortOrder: 9,
+    },
+    {
+      slug: "malt-beer",
+      categoryId: "cold-gas",
+      name: "آبجو مالت قهوه",
+      description: "آبجو بدون الکل با طعم مالت قهوه",
+      longDescription: "ترکیب طعم مالت با نت‌های قهوه‌ای برای تجربه‌ای عمیق‌تر و کمی تلخ.",
+      image: "/menu-items/Koubar-119.JPG",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["طعم قهوه", "مالت پررنگ", "تلخی متوسط"],
+      active: true,
+      sortOrder: 1,
+    },
+    {
+      slug: "medovik",
+      categoryId: "desserts",
+      name: "مدوویک",
+      description: "دسر روسی تشکیل شده از بیسکوییت دست‌ساز عسلی به همراه کرم کاراملی",
+      longDescription: "لایه‌های نازک بیسکوییت عسلی دست‌ساز در کنار کرم کاراملی نرم؛ دسر کلاسیک روسی",
+      image: "/images/gifting-art.png",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["عسلی", "لایه لایه", "کاراملی"],
+      active: false,
+      sortOrder: 8,
+    },
+    {
+      slug: "special-brew",
+      categoryId: "special",
+      name: "دمی",
+      description: "با قهوه ی اسپشیالیتی ",
+      longDescription: "استفاده از ابزار نسل سوم دم آوری",
+      image: "/menu-items/Koubar-127.JPG",
+      price: 480000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: "تخصصی",
+      notes: ["شفاف", "گلی", "اسیدیته روشن"],
+      active: true,
+      sortOrder: 2,
+    },
+    {
+      slug: "beer-peach",
+      categoryId: "cold-gas",
+      name: "بیر پیچ",
+      description: "آبجو مشکی به همراه یک شات اسپرسو و سیروپ دست ساز هلو ",
+      longDescription: "ترکیبی خاص از آبجو مشکی، یک شات اسپرسو و سیروپ دست‌ساز هلو چای؛ طعمی لایه‌دار بین تلخی و شیرینی میوه‌ای",
+      image: "/menu-items/Koubar-119.JPG",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["لایه دار", "تلخی متعادل", "شیرینی میوه ای"],
+      active: true,
+      sortOrder: 2,
+    },
+    {
+      slug: "praline-pesteh",
+      categoryId: "desserts",
+      name: "پرالین پسته",
+      description: "دسر پرالین پسته",
+      longDescription: "لایه‌های پرالین با مغز پسته تازه، بافتی ترد و کرمی در کنار هم",
+      image: "/images/gifting-art.png",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["پسته ای", "ترد", "شیرینی متعادل"],
+      active: false,
+      sortOrder: 3,
+    },
+    {
+      slug: "sachertorte",
+      categoryId: "desserts",
+      name: "زاخرتورته",
+      description: "کیک شکلاتی اتریشی به همراه کنفی توت‌فرنگی و گاناش شکلات",
+      longDescription: "کیک کلاسیک اتریشی با بافت متراکم شکلاتی، لایه کنفی توت‌فرنگی و روکش گاناش شکلاتی براق",
+      image: "/images/gifting-art.png",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["شکلاتی متراکم", "میوه ای", "براق"],
+      active: false,
+      sortOrder: 8,
+    },
+    {
+      slug: "cheesecake-sansebastian-vanilla",
+      categoryId: "desserts",
+      name: "سن سباستین وانیل",
+      description: "چیز کیک باسک با طعم وانیل",
+      longDescription: "چیز کیک سوخته سبک باسکی با روکش کاراملی و مغز کرمی وانیلی",
+      image: "/images/gifting-art.png",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["کرمی", "کاراملی", "وانیلی"],
+      active: false,
+      sortOrder: 6,
+    },
+    {
+      slug: "matcha-latte",
+      categoryId: "matcha",
+      name: "ماچا لاته",
+      description: "پودر ماچا با کیفیت",
+      longDescription: "پودر ماچا با کیفیت",
+      image: "/menu-items/Koubar-130.JPG",
+      price: 290000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["شفاف", "گلی", "اسیدیته روشن"],
+      active: true,
+      sortOrder: 1,
+    },
+    {
+      slug: "spirolina",
+      categoryId: "cold-gas",
+      name: "اسپیرولینا",
+      description: "موکتل خنک و مغذی با شیر و جلبک اسپیرولینا",
+      longDescription: "ترکیبی ساده و تازه از شیر و پودر جلبک اسپیرولینا که روی یخ سرو می‌شود؛ یک نوشیدنی ظاهری فریبنده با فواید سلامتی، بدون شیرین‌کننده یا طعم‌دهنده‌های اضافی — فقط خلوص!",
+      image: "/menu-items/Koubar-131.JPG",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: [],
+      active: true,
+      sortOrder: 0,
+    },
+    {
+      slug: "supreme-chocolate",
+      categoryId: "desserts",
+      name: "سوپریم شکلات",
+      description: "کیک سوپریم شکلاتی",
+      longDescription: "کیک شکلاتی غلیظ با لایه‌های گاناش و بافتی نرم و مخملی",
+      image: "/images/gifting-art.png",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["شکلاتی غلیظ", "مخملی", "شیرین"],
+      active: false,
+      sortOrder: 5,
+    },
+    {
+      slug: "supreme-pesteh",
+      categoryId: "desserts",
+      name: "سوپریم پسته",
+      description: "کیک سوپریم با طعم پسته",
+      longDescription: "کیک نرم و مرطوب با کرم پسته و لایه‌های آجیلی؛ غنی و مغزدار",
+      image: "/images/gifting-art.png",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["مغزدار", "مرطوب", "غنی"],
+      active: false,
+      sortOrder: 4,
+    },
+    {
+      slug: "tiramisu",
+      categoryId: "desserts",
+      name: "تیرامیسو",
+      description: "دسر کلاسیک ایتالیایی با قهوه و ماسکارپونه",
+      longDescription: "لایه‌های بیسکویت خیس‌خورده در قهوه و کرم ماسکارپونه، با روکش کاکائو",
+      image: "/images/gifting-art.png",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["قهوه ای", "کرمی", "کاکائویی"],
+      active: false,
+      sortOrder: 11,
+    },
+    {
+      slug: "tonic-espresso",
+      categoryId: "cold-gas",
+      name: "تونیک اسپرسو",
+      description: "تونیک واتر به همراه یک شات اسپرسو",
+      longDescription: "ترکیب گازدار و تلخ‌وشیرین تونیک واتر با یک شات اسپرسو؛ خنک و پرانرژی",
+      image: "/menu-items/Koubar-113.JPG",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: ["گازدار", "تلخ وشیرین", "خنک"],
+      active: true,
+      sortOrder: 0,
+    },
+    {
+      slug: "hot-choco",
+      categoryId: "hotDrinks",
+      name: "هات چاکلت",
+      description: "هات چاکلت غلیظ و گرم با شکلات مرغوب",
+      longDescription: "نوشیدنی گرم و وسوسه‌انگیز از شکلات تلخ ذوب‌شده و شیر تازه با بافتی غلیظ و مخملی؛ قابل سفارشی‌سازی با خامه و مارشمالو برای اونایی که شیرین‌تر از زندگی‌شون دوست دارن.",
+      image: "/menu-items/Koubar-132.JPG",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: [],
+      active: true,
+      sortOrder: 3,
+    },
+    {
+      slug: "healthy-herbal-tea",
+      categoryId: "hotDrinks",
+      name: "دمنوش سلامت",
+      description: "ترکیب گیاهی به لیمو، بابونه و بهار نارنج",
+      longDescription: "دمنوشی سبک و خوش‌عطر از گیاهان تازه که هم گواراست، هم آرام‌بخش؛ ترکیب به لیمو، بابونه و بهار نارنج، دستورِ سلامتی‌ست که مادربزرگ‌ها قسم می‌خورن جواب می‌ده.",
+      image: "/menu-items/Koubar-111.JPG",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: [],
+      active: true,
+      sortOrder: 2,
+    },
+    {
+      slug: "calming-herbal-tea",
+      categoryId: "hotDrinks",
+      name: "دمنوش آرامش",
+      description: "دمنوش گل گاوزبان، بهار نارنج و گل محمدی",
+      longDescription: "معجون آرامش‌بخش گل گاوزبان با عطر وسوسه‌انگیز بهار نارنج و لطافت گل محمدی؛ مناسب شب‌های شلوغ ذهنی و استرس‌های روزمره — دقیقاً همون چیزی که بعد از یک روز دیباگ کردن لازم داری!",
+      image: "/menu-items/Koubar-111.JPG",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: [],
+      active: true,
+      sortOrder: 1,
+    },
+    {
+      slug: "masala-tea",
+      categoryId: "hotDrinks",
+      name: "چای ماسالا",
+      description: "چای ماسالای سنتی با ادویه‌های گرم و عطر دل‌نشین هندی",
+      longDescription: "ترکیب چای سیاه غلیظ و شیر تازه با ادویه‌های اصیل مثل دارچین، زنجبیل، هل و میخک که با عسل شیرین شده؛ برای روزهای سرد، یک پتوی گرم در لیوان!",
+      image: "/menu-items/Koubar-128.JPG",
+      price: 100000,
+      priceSecondary: null,
+      dualCoffeePricing: false,
+      linePrimaryLabel: null,
+      lineSecondaryLabel: null,
+      badge: null,
+      notes: [],
+      active: true,
+      sortOrder: 0,
     },
   ];
 
-  for (const [i, p] of extraRoastery.entries()) {
-    await prisma.roasteryProduct.create({
-      data: {
-        slug: p.id,
-        title: p.title,
-        description: p.description,
-        longDescription: p.description,
-        image: "/images/hero.png",
-        price: p.price,
-        badge: "badge" in p ? p.badge : undefined,
-        variant:
-          p.variant === "kenya"
-            ? RoasteryVariant.KENYA
-            : p.variant === "street"
-              ? RoasteryVariant.STREET
-              : RoasteryVariant.AFRICAN,
-        sortOrder: i,
-        inStock: true,
-        active: true,
-      },
+  for (const item of cafeItems) {
+    const { slug, ...rest } = item;
+    await prisma.cafeMenuItem.upsert({
+      where: { slug },
+      update: { slug, ...rest },
+      create: { slug, ...rest },
     });
   }
 
-  for (const [i, a] of accessories.entries()) {
-    await prisma.accessory.create({
-      data: {
-        slug: a.id,
-        title: a.title,
-        description: a.description,
-        longDescription: a.longDescription,
-        image: a.image,
-        price: a.price,
-        badge: a.badge,
-        category: a.category,
-        notes: a.notes ?? [],
-        sortOrder: i,
-        inStock: true,
-        active: true,
-      },
-    });
-  }
-
-  for (const [i, g] of giftItems.entries()) {
-    await prisma.giftItem.create({
-      data: {
-        title: g.title,
-        description: g.description,
-        image: g.image,
-        linkHref: "/#gifts",
-        sortOrder: i,
-        active: true,
-      },
-    });
-  }
-
-  for (const [i, post] of blogPosts.entries()) {
-    await prisma.blogPost.create({
-      data: {
-        slug: post.slug,
-        title: post.title,
-        excerpt: post.excerpt,
-        image: post.image,
-        author: post.author,
-        category: post.category,
-        readMinutes: post.readMinutes,
-        status: i === 2 ? BlogStatus.DRAFT : BlogStatus.PUBLISHED,
-        blocks: post.blocks,
-        publishedAt: new Date(Date.now() - i * 86400000 * 7),
-      },
-    });
-  }
-
-  const staffMembers = await Promise.all(
-    [
-      { name: "علی احمدی", role: "سرور" },
-      { name: "مریم حسینی", role: "باریستا" },
-      { name: "رضا کریمی", role: "سرور" },
-    ].map((s) => prisma.staff.create({ data: s })),
-  );
-
-  const roastery = await prisma.roasteryProduct.findFirst();
-  const cafeItem = await prisma.cafeMenuItem.findFirst();
-
-  if (roastery && demoUsers[0]) {
-    const order = await prisma.order.create({
-      data: {
-        orderNumber: "ORD-SEED001",
-        userId: demoUsers[0].id,
-        type: "SHOP",
-        status: "DELIVERED",
-        total: roastery.price,
-        shippingName: demoUsers[0].name!,
-        shippingPhone: demoUsers[0].phone,
-        shippingAddress: demoUsers[0].address!,
-        items: {
-          create: [
-            {
-              source: "ROASTERY",
-              catalogId: roastery.slug,
-              title: roastery.title,
-              image: roastery.image,
-              price: roastery.price,
-              quantity: 1,
-            },
-          ],
-        },
-      },
-    });
-    await prisma.transaction.create({
-      data: {
-        txNumber: "TX-SEED001",
-        orderId: order.id,
-        userId: demoUsers[0].id,
-        amount: order.total,
-        method: "ثبت دستی (بدون درگاه)",
-        status: "PAID",
-      },
-    });
-  }
-
-  if (cafeItem && demoUsers[1]) {
-    const order = await prisma.order.create({
-      data: {
-        orderNumber: "ORD-SEED002",
-        userId: demoUsers[1].id,
-        type: "CAFE",
-        status: "PROCESSING",
-        total: cafeItem.price * 2,
-        shippingName: demoUsers[1].name!,
-        shippingPhone: demoUsers[1].phone,
-        shippingAddress: demoUsers[1].address!,
-        items: {
-          create: [
-            {
-              source: "CAFE",
-              catalogId: cafeItem.slug,
-              title: cafeItem.name,
-              image: cafeItem.image,
-              price: cafeItem.price,
-              quantity: 2,
-            },
-          ],
-        },
-      },
-    });
-    await prisma.transaction.create({
-      data: {
-        txNumber: "TX-SEED002",
-        orderId: order.id,
-        userId: demoUsers[1].id,
-        amount: order.total,
-        method: "ثبت دستی (بدون درگاه)",
-        status: "PAID",
-      },
-    });
-  }
-
-  if (cafeItem && demoUsers[2]) {
-    const order = await prisma.order.create({
-      data: {
-        orderNumber: "ORD-SEED003",
-        userId: demoUsers[2].id,
-        type: "CAFE",
-        status: "DELIVERED",
-        total: cafeItem.price * 3,
-        shippingName: demoUsers[2].name!,
-        shippingPhone: demoUsers[2].phone,
-        shippingAddress: demoUsers[2].address!,
-        items: {
-          create: [
-            {
-              source: "CAFE",
-              catalogId: cafeItem.slug,
-              title: cafeItem.name,
-              image: cafeItem.image,
-              price: cafeItem.price,
-              quantity: 3,
-            },
-          ],
-        },
-      },
-    });
-    await prisma.transaction.create({
-      data: {
-        txNumber: "TX-SEED003",
-        orderId: order.id,
-        userId: demoUsers[2].id,
-        amount: order.total,
-        method: "ثبت دستی (بدون درگاه)",
-        status: "PAID",
-      },
-    });
-    await prisma.review.create({
-      data: {
-        orderId: order.id,
-        userId: demoUsers[2].id,
-        staffId: staffMembers[1]!.id,
-        staffStars: 5,
-        foodStars: 4,
-        comment: "قهوه عالی بود و برخورد پرسنل بسیار محترمانه.",
-      },
-    });
-  }
-
-  if (roastery && demoUsers[1] && staffMembers[0]) {
-    const deliveredShop = await prisma.order.create({
-      data: {
-        orderNumber: "ORD-SEED004",
-        userId: demoUsers[1].id,
-        type: "SHOP",
-        status: "DELIVERED",
-        total: roastery.price * 2,
-        shippingName: demoUsers[1].name!,
-        shippingPhone: demoUsers[1].phone,
-        shippingAddress: demoUsers[1].address!,
-        items: {
-          create: [
-            {
-              source: "ROASTERY",
-              catalogId: roastery.slug,
-              title: roastery.title,
-              image: roastery.image,
-              price: roastery.price,
-              quantity: 2,
-            },
-          ],
-        },
-      },
-    });
-    await prisma.transaction.create({
-      data: {
-        txNumber: "TX-SEED004",
-        orderId: deliveredShop.id,
-        userId: demoUsers[1].id,
-        amount: deliveredShop.total,
-        method: "ثبت دستی (بدون درگاه)",
-        status: "PAID",
-      },
-    });
-    await prisma.review.create({
-      data: {
-        orderId: deliveredShop.id,
-        userId: demoUsers[1].id,
-        staffId: staffMembers[0]!.id,
-        staffStars: 4,
-        foodStars: 5,
-        comment: "بسته‌بندی مرتب و تحویل سریع.",
-      },
-    });
-  }
-
-  if (cafeItem && demoUsers[0] && staffMembers[2]) {
-    const order = await prisma.order.create({
-      data: {
-        orderNumber: "ORD-SEED005",
-        userId: demoUsers[0].id,
-        type: "CAFE",
-        status: "DELIVERED",
-        total: cafeItem.price,
-        shippingName: demoUsers[0].name!,
-        shippingPhone: demoUsers[0].phone,
-        shippingAddress: demoUsers[0].address!,
-        items: {
-          create: [
-            {
-              source: "CAFE",
-              catalogId: cafeItem.slug,
-              title: cafeItem.name,
-              image: cafeItem.image,
-              price: cafeItem.price,
-              quantity: 1,
-            },
-          ],
-        },
-      },
-    });
-    await prisma.transaction.create({
-      data: {
-        txNumber: "TX-SEED005",
-        orderId: order.id,
-        userId: demoUsers[0].id,
-        amount: order.total,
-        method: "ثبت دستی (بدون درگاه)",
-        status: "PAID",
-      },
-    });
-    await prisma.review.create({
-      data: {
-        orderId: order.id,
-        userId: demoUsers[0].id,
-        staffId: staffMembers[2]!.id,
-        staffStars: 5,
-        foodStars: 5,
-        comment: "فضای کافه دلنشین و سرویس فوق‌العاده.",
-        createdAt: new Date(Date.now() - 86400000),
-      },
-    });
-  }
-
-  console.log(`✅ Seed complete. Admin phone: ${adminPhone}`);
-  console.log(`   Admin user id: ${admin.id}`);
+  console.log(`✅ ${cafeItems.length} آیتم منوی کافه ایجاد/به‌روزرسانی شد.`);
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error("خطا در seed:", e);
     process.exit(1);
   })
-  .finally(() => prisma.$disconnect());
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

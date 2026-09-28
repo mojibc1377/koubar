@@ -15,7 +15,9 @@ import { BrandLogo } from "./BrandLogo";
 
 type NavLink = { href: string; label: string };
 
+
 function MenuIcon({ open }: { open: boolean }) {
+  
   return (
     <span className="relative block h-5 w-6" aria-hidden>
       <motion.span
@@ -24,12 +26,12 @@ function MenuIcon({ open }: { open: boolean }) {
         transition={spring}
       />
       <motion.span
-        className="absolute left-0 top-[9px] h-0.5 w-6 origin-center rounded-full bg-icon"
+        className="absolute left-0 top-2.25 h-0.5 w-6 origin-center rounded-full bg-icon"
         animate={open ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
         transition={spring}
       />
       <motion.span
-        className="absolute left-0 top-[18px] h-0.5 w-6 origin-center rounded-full bg-icon"
+        className="absolute left-0 top-4.5 h-0.5 w-6 origin-center rounded-full bg-icon"
         animate={open ? { top: 9, rotate: -45 } : { top: 18, rotate: 0 }}
         transition={spring}
       />
@@ -41,7 +43,7 @@ export function HeaderMobileMenu({ links }: { links: readonly NavLink[] }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user,isAdmin } = useAuth();
   const { mode } = usePlatformMode();
   const reduce = useReducedMotion();
   const firstName = user?.name?.split(" ")?.[0] ?? "کاربر";
@@ -162,6 +164,7 @@ export function HeaderMobileMenu({ links }: { links: readonly NavLink[] }) {
                     variants={staggerItem}
                     className="mt-8 rounded-2xl border border-border bg-linear-to-br from-accent/10 to-card p-4"
                   >
+                    
                     {user ? (
                       <Link
                         href="/account"
@@ -190,9 +193,26 @@ export function HeaderMobileMenu({ links }: { links: readonly NavLink[] }) {
                         >
                           ثبت‌نام
                         </Link>
+                   
+                        
                       </div>
                     )}
                   </motion.div>
+                  {isAdmin && ( <motion.div
+                    variants={staggerItem}
+                    className="mt-8 rounded-2xl border border-border bg-linear-to-br from-accent/10 to-card p-4"
+                  >
+                    
+                    
+                  <Link
+                    href="/admin"
+                    className=""
+                  >
+                    پنل مدیریت
+                  </Link>
+               
+                  </motion.div>
+                   )}
                   </div>
                 </motion.div>
               </motion.nav>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/motion/Reveal";
 import { ease } from "@/lib/motion";
+import { getImageUrl } from "@/lib/storage";
 
 export function SeasonalBestsellers() {
   const reduce = useReducedMotion();
@@ -25,7 +26,7 @@ export function SeasonalBestsellers() {
             transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
           >
             <Image
-              src="/images/seasonal.png"
+              src={getImageUrl("/images/Koubar-47.webp")}
               alt="Castillo Washed Colombia"
               fill
               className="object-cover object-left"
@@ -40,6 +41,7 @@ export function SeasonalBestsellers() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3, duration: 0.6, ease }}
+            
           >
             <div className="flex items-start gap-2">
               <motion.span
@@ -63,12 +65,15 @@ export function SeasonalBestsellers() {
             viewport={{ once: true }}
             transition={{ delay: 0.2, duration: 0.7, ease }}
           >
-            <p className="text-xs tracking-[0.25em] text-background/90">CASTILLO</p>
-            <p className="text-2xl font-bold tracking-[0.2em] text-background md:text-3xl">
-              WASHED COLOMBIA
+            <p className="
+            text-2xl font-bold tracking-[0.2em] text-foreground-muted md:text-3xl
+            ">دیلمان</p>
+            <p className="
+            text-xs tracking-[0.25em] text-foreground/90">
+              ۱۰۰ عربیکا
             </p>
-            <p className="mt-2 max-w-md text-[10px] leading-5 tracking-wider text-background/75">
-              TASTE PROFILE : SWEET, CARAMEL, BALANCED, PEACH, APRICOT
+            <p className="mt-2 max-w-md text-[10px] leading-5 tracking-wider text-foreground/75">
+              TASTE PROFILE : Milk Chocolate - Caramel- Red Fruits - Sweet nutty
             </p>
             <motion.div
               className="mt-6 inline-block bg-foreground/80 px-4 py-2 text-[10px] tracking-widest text-background"
@@ -100,8 +105,8 @@ export function SeasonalBestsellers() {
               پرفروش‌های فصل
             </h2>
             <p className="mt-6 max-w-md text-sm leading-8 text-muted">
-              بهترین انتخاب‌های فصل برای هدیه‌دادن یا لذت‌بردن در خانه؛ تا موجود است
-              از آن‌ها استفاده کنید.
+              بهترین انتخاب‌های فصل برای لذت‌بردن در خانه؛ تا موجود است از آن‌ها
+              استفاده کنید.
             </p>
           </Reveal>
           <motion.div whileHover={{ x: -6 }} transition={{ duration: 0.25 }}>

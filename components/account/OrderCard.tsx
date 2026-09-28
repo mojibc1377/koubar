@@ -6,6 +6,7 @@ import { useState } from "react";
 import { formatPrice } from "@/lib/format";
 import { spring } from "@/lib/motion";
 import type { Order } from "@/lib/types";
+import { getImageUrl } from "@/lib/storage";
 
 const statusLabels: Record<Order["status"], string> = {
   delivered: "تحویل شده",
@@ -96,8 +97,8 @@ export function OrderCard({
           {steps.map((label, i) => (
             <div key={label} className="flex flex-1 flex-col items-center gap-1">
               <motion.div
-                className={`h-2 w-full max-w-[48px] rounded-full ${
-                  i <= active ? "bg-accent" : "bg-border"
+                className={` max-w-[50px] rounded-full ${
+                  i <= active ? "bg-accent h-6 w-6" : "bg-border h-4 w-4"
                 }`}
                 initial={false}
                 animate={{ scaleX: i <= active ? 1 : 0.6 }}
@@ -124,15 +125,7 @@ export function OrderCard({
                   className="flex items-center justify-between gap-3 text-sm"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="relative h-11 w-11 overflow-hidden rounded-lg border border-border">
-                      <Image
-                        src="/images/hero.png"
-                        alt=""
-                        fill
-                        className="object-cover"
-                        sizes="44px"
-                      />
-                    </div>
+                   
                     <span className="text-foreground/80">
                       {item.title} × {item.quantity.toLocaleString("fa-IR")}
                     </span>

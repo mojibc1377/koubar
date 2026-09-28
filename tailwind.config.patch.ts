@@ -7,6 +7,7 @@ const config: Config = {
   theme: {
     extend: {
       keyframes: {
+        
         draw: {
           to: { "stroke-dashoffset": "0" },
         },

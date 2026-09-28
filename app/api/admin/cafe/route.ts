@@ -33,6 +33,10 @@ export async function POST(request: Request) {
     name?: string;
     description?: string;
     price?: number;
+    priceSecondary?: number;
+    dualCoffeePricing?: boolean;
+    linePrimaryLabel?: string;
+    lineSecondaryLabel?: string;
     categoryId?: string;
     image?: string;
     badge?: string;
@@ -50,6 +54,11 @@ export async function POST(request: Request) {
       description: body.description?.trim() ?? "",
       image: body.image ?? "/images/hero.png",
       price: Number(body.price) || 0,
+      priceSecondary:
+        typeof body.priceSecondary === "number" ? body.priceSecondary : null,
+      dualCoffeePricing: body.dualCoffeePricing === true,
+      linePrimaryLabel: body.linePrimaryLabel ?? null,
+      lineSecondaryLabel: body.lineSecondaryLabel ?? null,
       badge: body.badge,
       notes: body.notes ?? [],
       categoryId: body.categoryId,

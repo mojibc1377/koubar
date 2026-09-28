@@ -12,6 +12,7 @@ import { spring } from "@/lib/motion";
 import { Z } from "@/lib/z-index";
 import { MdDelete } from "react-icons/md";
 import type { Variants } from "framer-motion";
+import { getImageUrl } from "@/lib/storage";
 
 export function CartModal() {
   const { items, total, count, isOpen, closeCart, removeItem } = useCart();
@@ -21,7 +22,7 @@ export function CartModal() {
     rest: { scale: 1, rotate: 0, x: 0 },
 
     hover: {
-      scale: [1, 1.3, 1],
+      scale: [1, 1.6, 1],
       rotate: [0, -12, 12, -10, 10, 0],
       x: [0, -2, 2, -2, 2, 0],
       transition: {
@@ -97,7 +98,7 @@ export function CartModal() {
             <div className="flex-1 overflow-y-auto px-5 py-4">
               {items.length === 0 ? (
                 <motion.div
-                  className="flex h-full min-h-50flex-col items-center justify-center text-center"
+                  className="flex flex-col h-full min-h-50flex-col items-center justify-center text-center"
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
@@ -125,7 +126,7 @@ export function CartModal() {
                     >
                       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-border">
                         <Image
-                          src={item.image ?? "/images/hero.png"}
+                          src={item.image ? getImageUrl(item.image) : "/images/hero.png"}
                           alt=""
                           fill
                           className="object-cover"

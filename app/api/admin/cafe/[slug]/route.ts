@@ -20,7 +20,28 @@ export async function PATCH(
       ...(typeof body.description === "string"
         ? { description: body.description }
         : {}),
+      ...(typeof body.longDescription === "string"
+        ? { longDescription: body.longDescription || null }
+        : {}),
+      ...(typeof body.image === "string"
+        ? { image: body.image.trim() || "/images/hero.png" }
+        : {}),
+      ...(typeof body.notes !== undefined && Array.isArray(body.notes)
+        ? { notes: body.notes }
+        : {}),
       ...(typeof body.price === "number" ? { price: body.price } : {}),
+      ...(typeof body.priceSecondary === "number"
+        ? { priceSecondary: body.priceSecondary }
+        : {}),
+      ...(typeof body.dualCoffeePricing === "boolean"
+        ? { dualCoffeePricing: body.dualCoffeePricing }
+        : {}),
+      ...(typeof body.linePrimaryLabel === "string"
+        ? { linePrimaryLabel: body.linePrimaryLabel || null }
+        : {}),
+      ...(typeof body.lineSecondaryLabel === "string"
+        ? { lineSecondaryLabel: body.lineSecondaryLabel || null }
+        : {}),
       ...(typeof body.badge === "string" ? { badge: body.badge || null } : {}),
       ...(typeof body.active === "boolean" ? { active: body.active } : {}),
       ...(typeof body.categoryId === "string"
